@@ -1,7 +1,7 @@
 ## 몽고 맵퍼 초기 설정
 
 config  = YAML::load(File.open("#{::Rails.root}/config/mongo.yml"))
-env     = ENV['RAILS_ENV']
+env     = ENV['RAILS_ENV'] || "development"
 
 MongoMapper.connection = Mongo::Connection.new(config[env]['host'], config[env]['port'])
 #MongoMapper.database = "#myapp-#{Rails.env}"

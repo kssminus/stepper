@@ -1,14 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Stepper</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <meta charset="utf-8" />
+  <title>Stepper :: Transaction Tracker </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="transaction tracker system" />
+  <meta name="author" content="kim seongsik" />
+  <%= stylesheet_link_tag "application", :media => "all" %>     
+  <%= stylesheet_link_tag "bootstrap", :media => "all" %>           
+  <%= stylesheet_link_tag "bootstrap-responsive", :media => "all" %>
   <%= javascript_include_tag "application" %>
+
   <%= csrf_meta_tags %>
+  <!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
 </head>
+<style type="text/css">
+  body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+  }
+</style>
 <body>
+<!-- Header -->
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="#">STEPPER :: Transaction Tracker</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav">
+            <% @dashboards.each do |dashboard| %>
+            <li><a href="./?dashboard=<%=dashboard.name%>"><%= dashboard.name %></a>
+            <% end %>
+            <li><a href="#contact"><i class="icon-plus icon-white"></i></a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+  </div>
+<!-- /Header -->
+<!-- body -->
+  <div class="container-fluid" > 
+    <%= yield %>
+  </div>
+<!-- /body -->
 
-<%= yield %>
-
+  <footer class="footer">
+    <p class="pull-right"><a href="#">Reloading</a></p>
+    <p>(c) Copyright 2012 kssminus</p>
+    <p>Develop by 김성식</p>
+    <ul class="footer-links">
+      <li><a href="http://wiki.kthcorp.com/display/PNCOINDV/005.+Transaction+Tracker" target="_blank">@DevOps Wiki</a></li>
+    </ul>
+  </footer>
 </body>
 </html>

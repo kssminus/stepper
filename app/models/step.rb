@@ -1,4 +1,4 @@
-class Step < ApplcationModel
+class Step
   include MongoMapper::Document
   
   key :si, String
