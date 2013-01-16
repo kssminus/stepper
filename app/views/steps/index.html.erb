@@ -12,5 +12,13 @@
       </div><!--/.well -->
     </div><!--/span-->
     <div class="span9">
+    <% @steps.each do |step| %>
+      <div class="progress progress-striped active" >
+         <div class="bar" style="width: <%=step.progress.to_i%>%" ><%= step.si%>(<%=step.progress.to_i%>%)</div>
+      </div>
+
+    <% end %>
     </div><!--/span-->
   </div><!--/row-->
+
+<% p @steps.inspect %>
