@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+
+require 'optparse'
+require 'stepper'
+require 'stepper/runner'
+require 'yaml'
+
+
+options = {}
+
+parser = OptionParser.new do |op|
+  op.banner = "Usage: Stepper [options]"
+
+  op.separator "Stepper"
+  op.separator ""
+  op.separator "Options:"
+
+  ##
+  ## Daemonization / Logging options
+  ##
+  op.on("--env environment", "WHAT ENVIRONMENT ARE YOU ON??") do |environment|
+    options[:environment] = environment
+  end
+  
+  op.on("--pidfile PATH", "DO YOU WANT ME TO WRITE A PIDFILE SOMEWHERE FOR U?") do |pid_file|
+    options[:pid_file] = pid_file
+  end
+  
+  op.on("--logfile PATH", "I'LL POOP OUT LOGS HERE FOR U") do |log_file|
+    options[:log_file] = log_file
+  end
+  
+  op.on("-v", "--verbosity LEVEL", "HOW MUCH POOP DO U WANT IN UR LOGS? [LEVEL=0:errors,1:some,2:lots of poop]") do |verbosity|
+    options[:verbosity] = verbosity.to_i
+  end
+  
+  op.on("-K", "--kill", "SHUT THE Stepper") do
+    options[:kill] = true
+  end
+  
+  ##
+  ## Socket to suck from
+  ##
+  
+  op.on("-H", "--host HOST", "I SUCK ON THIS NETWORK INTERFACE") do |host|
+    options[:host] = host
+  end
+  
+  op.on("-P", "--port PORT", "I SUCK FROM THIS HOLE") do |port|
+    options[:port] = port.to_i
+  end
+  
+  ##
+  ## Mongo
+  ##
+  op.on("--mongodb DATABASE", "STORE SUCKINGS IN THIS DB") do |mongo_db|
+    options[:mongo_db] = mongo_db
+  end
+  
+  # NOTE: this option can be given multiple times for a replica set
+  op.on("--mongohost HOSTPORT", "STORE SUCKINGS IN THIS MONGO [eg, localhost or localhost:27017]") do |mongo_hostport|
+    options[:mongo_hostports] ||= []
+    options[:mongo_hostports] << mongo_hostport
+  end
+
+  op.on("-h", "--help", "I WANT MOAR HALP") do
+    puts op
+    exit
+  end
+
+  op.separator ""
+end
+
+parser.parse!
+
+app_home  = File.expand_path(File.dirname(__FILE__)+'/..')
+
+mongo     = YAML::load(File.open("#{app_home}/config/mongo.yml"))
+sucker    = YAML::load(File.open("#{app_home}/config/sucker.yml"))
+
+options[:environment]     ||= "development"
+options[:log_file]         ||= "#{app_home}/log/sucker.log"
+options[:pid_file]        ||= "#{app_home}/tmp/pids/sucker.pid"
+options[:verbosity]       ||= 2
+options[:host]            ||= sucker[options[:environment]]['host']
+options[:port]            ||= sucker[options[:environment]]['port']
+options[:mongo_db_name]   ||= mongo[options[:environment]]['database']
+options[:mongo_hostport]  ||= []
+options[:mongo_hostport]  << "#{mongo[options[:environment]]['host']}:#{mongo[options[:environment]]['port']}"
+
+Stepper::Runner.new(options).run!

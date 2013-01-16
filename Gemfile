@@ -2,7 +2,11 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.11'
 
+gem 'mongo'
 gem 'mongo_mapper'
+gem 'em-mongo'
+gem 'bson_ext'
+gem 'eventmachine'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

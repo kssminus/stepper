@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+# Running bin/stepper-console will put you in an IRB session with the mouth files loaded.  Convenient for development and experimentation.
+
+require 'irb'
+require 'irb/completion'
+
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+
+require 'stepper'
+require 'stepper/instrument'
+
+IRB.start

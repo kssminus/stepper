@@ -1,6 +1,6 @@
-class Step 
+class Step < ApplcationModel
   include MongoMapper::Document
-
+  
   key :si, String
   key :t, Integer
   key :sm, Integer

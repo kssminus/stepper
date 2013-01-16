@@ -14,4 +14,8 @@
 /log/*.log
 /tmp
 
+# Ignore swp files
 *.swp
+
+# Ignore configuration File
+/config/*.yml

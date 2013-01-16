@@ -1,0 +1,12 @@
+## Enviornments
+
+development:
+  host: localhost
+  port: 27017
+  database: mouth
+
+production:
+  host: localhost
+  port: 27017
+  database: mouth
+
