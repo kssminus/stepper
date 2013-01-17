@@ -45,4 +45,4 @@ end
 parser.parse!
 
 Stepper.daemon_hostport = options[:host]
-Stepper.step(options[:si],options[:cs])
+Stepper.stepup(options[:si],options[:cs])
