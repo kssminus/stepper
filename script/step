@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+
+require 'optparse'
+require 'stepper'
+require 'stepper/instrument'
+
+
+options = {
+  :si => "step",
+  :ms => 1,
+  :host => "localhost:8082"
+
+}
+
+
+parser = OptionParser.new do |op|
+  op.banner = "Usage: Stepper [options]"
+
+  op.separator "Step"
+  op.separator ""
+  op.separator "register Step"
+
+  op.on("-s", "--step-id STEP_ID", "DETERMINE STEP ID") do |si|
+    options[:si] = si
+  end
+  
+  op.on("-m", "--max-step MAX_STEP", "DETERMINE MAX STEP") do |ms|
+    options[:ms] = ms
+  end
+  
+
+  op.on("-H", "--host HOST", "HOST eg)localhost:8082") do |host|
+    options[:host] = host
+  end
+ 
+  op.on("-h", "--help", "I WANT MOAR HALP") do
+    puts op
+    exit
+  end
+  
+end
+
+parser.parse!
+
+Stepper.daemon_hostport = options[:host]
+Stepper.step(options[:si],options[:ms])
