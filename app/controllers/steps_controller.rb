@@ -8,6 +8,9 @@ class StepsController < ApplicationController
     
      
     @steps = Step.all()
+    @steps = @steps.sort do |a,b|
+      b.progress <=> a.progress
+    end
     Rails.logger.info @steps.inspect
     Rails.logger.info @steps[0].progress
     respond_to do |format|
