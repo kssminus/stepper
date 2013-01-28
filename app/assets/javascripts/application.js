@@ -14,7 +14,21 @@
 //= require jquery_ujs
 
 $(function() {
-  $("#addCollectionBTN").click( function(){
+  $("#vmcreate-log-layer").dialog({
+    autoOpen: false
+    ,show: {
+      effect: "explode"
+      ,duration: 100
+    }
+    ,hide: {
+      effect: "explode"
+      ,duration: 100
+    }
+  });
+  
+  $("#addCollectionBTN").click( function() {
     $("#vmcreate-log-layer").dialog("open");
   });
 });
+
+

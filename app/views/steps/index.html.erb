@@ -6,12 +6,12 @@
       <div class="well sidebar-nav">
         <ul class="nav nav-list">
           <li><a href="#">FLOW</a></li>
-          <li><a href="#">STAGNANCE</a></li>
-          <li><a href="#">TEST</a></li>
+          <!--li><a href="#">STAGNANCE</a></li-->
+          <li><a href="/steps/test?dashborad=<%=params[:dashboard]%>">TEST</a></li>
         </ul>
       </div><!--/.well -->
     </div><!--/span-->
-    <div class="span9">
+    <div id="progresses" class="span9">
     <% @steps.each do |step| %>
       <div class="progress progress-striped active" >
         <div class="bar" style="width: <%=step.progress.to_i%>%" >
@@ -20,28 +20,23 @@
       </div>
 
     <% end %>
-      <div class="switch active pull-right" data-toggle="switch">
-        <input type="checkbox" id="refresh" checked></input>
-        <span class="switch-thumb" data-label-on="FLOW" data-label-off="STOP"></span>
-      </div>
-   
+         
     </div><!--/span-->
   </div><!--/row-->
+  <div class="switch active pull-right" data-toggle="switch">
+    <input type="checkbox" id="refresh" checked></input>
+    <span class="switch-thumb" data-label-on="FLOW" data-label-off="STOP"></span>
+  </div>
+
 </div>
 
-<!---------------------------
-  log view layer template
-  
-  use mustache template
-------------------------------->
-<script id="layer" type="text/html">
-  <div class="nnTitleBarWrapper">
-    <div class="nnTitleBarLeft" id="nnTitleBarID">log view : {{UUID}}</div>
-    <div class="nnclose"></div>
-    <div id="loader_{{UUID}}"></div>
-  </div>
-  <div class="nnContents">
-    <div id="log_{{UUID}}" class="logging"></div>
-  </div>
-</script>
 
+<script type="text/html"  id="stepTemplate">
+{{#steps}}
+  <div class="progress progress-striped active" >
+    <div class="bar" style="width: {{progress}}%" >
+      {{si}}({{cs}}/{{ms}})
+    </div>
+  </div>
+{{/steps}}
+</script>

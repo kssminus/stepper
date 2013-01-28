@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
@@ -13,8 +14,13 @@ options = {}
 parser = OptionParser.new do |op|
   op.banner = "Usage: Stepper [options]"
 
-  op.separator "Stepper"
+  op.separator "== Stepper Sucker =="
   op.separator ""
+  op.separator "Starting Stepper's Sucker"
+  op.separator "If you don't give any options, it'll refer <AppHome>/config/mongo.yml, sucker.yml"
+  op.separator "================================================================================="
+  op.separator "Stepper의 Sucker를 시작합니다."
+  op.separator "옵션을 주지 않으면<AppHome>/config/mongo.yml, sucker.yml를 참조합니다. "
   op.separator "Options:"
 
   ##
@@ -81,7 +87,7 @@ mongo     = YAML::load(File.open("#{app_home}/config/mongo.yml"))
 sucker    = YAML::load(File.open("#{app_home}/config/sucker.yml"))
 
 options[:environment]     ||= "development"
-options[:log_file]         ||= "#{app_home}/log/sucker.log"
+options[:log_file]        ||= "#{app_home}/log/sucker.log"
 options[:pid_file]        ||= "#{app_home}/tmp/pids/sucker.pid"
 options[:verbosity]       ||= 2
 options[:host]            ||= sucker[options[:environment]]['host']

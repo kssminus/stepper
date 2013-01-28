@@ -1,7 +1,17 @@
 Stepper::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
-
+  
+  get           '/collections'          => "collections#index"
+  post          '/collections'          => "collections#create"
+  put           '/collections/:si'      => "collections#update"
+  delete        '/collections/:si'      => "collections#destroy"
+ 
+  get           '/steps'          => "steps#index"
+  post          '/steps'          => "steps#create"
+  put           '/stpes/:si'      => "steps#update"
+  delete        '/steps/:si'      => "steps#destroy"
+ 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action

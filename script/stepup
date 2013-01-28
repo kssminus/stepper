@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'optparse'
 require 'stepper'
 require 'stepper/instrument'
-
 
 options = {
   :si => "step",
@@ -14,13 +14,11 @@ options = {
 
 }
 
-
 parser = OptionParser.new do |op|
-  op.banner = "Usage: Stepper [options]"
-
-  op.separator "Step"
+  op.separator "== Stepup == "
+  op.banner = "Usage: Steppup [options]"
   op.separator ""
-  op.separator "Stepping Up"
+  op.separator "Step up => 이미 등록한  Step을 올립니다."
 
   op.on("-s", "--step-id STEP_ID", "DETERMINE STEP ID") do |si|
     options[:si] = si
