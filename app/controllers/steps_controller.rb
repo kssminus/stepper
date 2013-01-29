@@ -5,14 +5,15 @@ class StepsController < ApplicationController
     @dashboards = Dashboard.all
     Step.set_collection_name(dashboard_to_collection(params[:dashboard]))
     #Step.set_collection_name("mouth_test")
+        
+    steps = Step.sort(:t.desc).limit(20)
     
-     
-    @steps = Step.sort(:t.desc).limit(20)
-    @steps = @steps.sort do |a,b|
-      a.progress <  b.progress
-    end
-
-    Rails.logger.info @steps.inspect
+    @steps  = Array.new
+    steps.each { |s| @steps << s }
+    @steps.sort!{ |a,b| a.progress <=> b.progress }
+    
+    #@steps.each { |s| Rails.logger.info s.progress }
+    #Rails.logger.info @steps.class
     #Rails.logger.info @steps[0].progress
     
     respond_to do |format|

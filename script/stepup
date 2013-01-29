@@ -10,7 +10,8 @@ require 'stepper/instrument'
 options = {
   :si => "step",
   :cs => 1,
-  :host => "localhost:8082"
+  :host => "localhost:8082", 
+  :file => nil
 
 }
 
@@ -26,14 +27,18 @@ parser = OptionParser.new do |op|
   
   op.on("-u", "--step-up STEP_UP", "HOW MANY STEPS ARE YOU CLIMB?") do |cs|
     options[:cs] = cs
-  end
+  end 
   
 
   op.on("-H", "--host HOST", "HOST eg)localhost:8082") do |host|
     options[:host] = host
   end
  
-  op.on("-h", "--help", "I WANT MOAR HALP") do
+  op.on("-f", "--file PATH", "File path to store actions. The host will be ignored. eg)~/log/stepper.log") do |file|
+    options[:file] = file
+  end
+
+  op.on("-h", "--help", "I WANT MOAR HALP" ) do
     puts op
     exit
   end
@@ -42,5 +47,13 @@ end
 
 parser.parse!
 
-Stepper.daemon_hostport = options[:host]
-Stepper.stepup(options[:si],options[:cs])
+if options[:file]
+  puts options.to_s
+  File.open(options[:file], "a") do |f|
+    f.puts("#{options[:si]}:#{options[:cs]}|su")
+    f.close
+  end
+else
+  Stepper.daemon_hostport = options[:host]
+  Stepper.stepup(options[:si],options[:cs])
+end

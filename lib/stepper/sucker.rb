@@ -9,7 +9,7 @@ module Stepper
   
     def receive_data(data)
       Stepper.logger.debug "UDP packet: '#{data}'"
-  
+      data = data.split(" ")[-1]
       sucker.store!(data)
     end
   end

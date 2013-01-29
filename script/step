@@ -11,7 +11,8 @@ require 'stepper/instrument'
 options = {
   :si => "step.0",
   :ms => 1,
-  :host => "localhost:8082"
+  :host => "localhost:8082",
+  :file => nil 
 
 }
 
@@ -22,7 +23,7 @@ parser = OptionParser.new do |op|
   op.separator ""
   op.separator "Register Step => Step을 등록합니다. "
 
-  op.on("-s", "--step-id STEP_ID", "DETERMINE STEP ID") do |si|
+  op.on("-s", "--step-id COLLECTIONSNAME.STEP_ID", "DETERMINE COLLECTION NAME AND STEP ID") do |si|
     options[:si] = si
   end
   
@@ -35,6 +36,10 @@ parser = OptionParser.new do |op|
     options[:host] = host
   end
  
+  op.on("-f", "--file PATH", "File path to store actions. The host will be ignored. eg)~/log/stepper.log") do |file|
+    options[:file] = file
+  end
+
   op.on("-h", "--help", "I WANT MOAR HALP") do
     puts op
     exit
@@ -44,5 +49,12 @@ end
 
 parser.parse!
 
-Stepper.daemon_hostport = options[:host]
-Stepper.step(options[:si],options[:ms])
+if options[:file]
+  File.open(options[:file], "a") do |f|
+    f.puts("#{options[:si]}:#{options[:ms]}|s")
+    f.close
+  end
+else
+  Stepper.daemon_hostport = options[:host]
+  Stepper.step(options[:si],options[:ms])
+end
