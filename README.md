@@ -71,7 +71,7 @@ udp 서버설정은 다음 파일에서 합니다.
     
 ## Feed DATA(데이터 공급하기)
 ### by Instrument
-    $LOAD_PATH.unshift <app_home_path>/lib')
+    $LOAD_PATH.unshift('<app_home_path>/lib')
     require 'stepper'
     require 'stepper/instrument'
     
