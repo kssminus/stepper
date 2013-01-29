@@ -1,6 +1,8 @@
 
 function refresh() {
   var dashboard = getUrlParams().dashboard;
+  if (dashboard == undefined)
+    dashboard = "";
   //console.log($("#refresh").attr("checked"));
   if($("#refresh").attr("checked")){
     $.ajax({
@@ -12,9 +14,15 @@ function refresh() {
     });
     
     function reload_board(data) {
-      var stat = Mustache.render($("#stepTemplate").html(), { steps : data, progress : function() { return (this.cs/this.ms)*100;} });
+      var stat = Mustache.render($("#stepTemplate").html(), { steps : data, progress : function() { 
+        if ( this.cs > this.ms)
+          return 100; 
+        else 
+          return (this.cs/this.ms)*100;
+      }});
+
       $("#progresses").empty().append(stat);
-      //console.log(stat);
+      console.log(stat);
       setTimeout(refresh, 5000);
     }
 
@@ -25,16 +33,6 @@ setTimeout(refresh, 5000);
 
 
 $(function() {
-
-  window.getUrlParams =  function (){
-    var params = {};
-    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str,key,value) {
-      params[key] = value;
-    });
-    return params;
-  }
-
-
 
   $("#addCollection").click( function (){
     name = $("#collectionName").val();

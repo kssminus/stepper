@@ -14,21 +14,14 @@
 //= require jquery_ujs
 
 $(function() {
-  $("#vmcreate-log-layer").dialog({
-    autoOpen: false
-    ,show: {
-      effect: "explode"
-      ,duration: 100
-    }
-    ,hide: {
-      effect: "explode"
-      ,duration: 100
-    }
-  });
-  
-  $("#addCollectionBTN").click( function() {
-    $("#vmcreate-log-layer").dialog("open");
-  });
-});
 
+  window.getUrlParams =  function (){
+    var params = {};
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str,key,value) {
+      params[key] = value;
+    });
+    return params;
+  }
+
+});
 

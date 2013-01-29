@@ -9,9 +9,9 @@ class Step
   validate :ms_bigger_than_0
 
   def ms_bigger_than_0
-    errors.add(:ms, "Step Max should be bigger than 0") if ms 1 < 0
+    errors.add(:ms, "Step Max should be bigger than 0") if ms < 0
   end
   def progress
-    return (cs.to_f/ms.to_f)*100
+    return ((cs.to_f/ms.to_f)*100 > 100 )? 100 : (cs.to_f/ms.to_f)*100 
   end
 end

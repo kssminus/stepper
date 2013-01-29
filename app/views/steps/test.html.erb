@@ -1,0 +1,48 @@
+<%= javascript_include_tag "test" %>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="well sidebar-nav">
+        <ul class="nav nav-list">
+          <li><a href="/?dashboard=<%=params[:dashboard]%>">FLOW</a></li>
+          <!--li><a href="#">STAGNANCE</a></li-->
+          <li class="active"><a href="/steps/test?dashboard=<%=params[:dashboard]%>">TEST</a></li>
+        </ul>
+      </div><!--/.well -->
+    </div><!--/span-->
+    <div id="test" class="span9">
+        <fieldset>
+          <legend>Step Test</legend>
+          <label class="controls-label">등록할 스텝의 이름을 넣으세요.</label>
+          <input type="text" placeholder="Step Name" class="controls"></input>
+          <label class="controls-label">최대 스텝수를 등록하세요.</label>
+          <div class="controls">
+            <select>
+              <option>1</option>
+              <option>5</option>
+              <option>10</option>
+              <option>15</option>
+              <option>20</option>
+            </select>
+          </div>
+          <button id="step" class="btn btn-success">Register Step</button>
+          </fieldset>
+          <hr>
+          <fieldset>
+          <label class="controls-label">올릴 스텝의 이름을 넣으세요.</label>
+          <input type="text" placeholder="Step Name" class="controls"></input>
+          <label class="controls-label"></label>
+          <button id="stepup" class="btn btn-primary">Step UP</button>
+        </fieldset>
+      <div id="alert" ></div>
+    </div><!--/span-->
+  </div><!--/row-->
+</div>
+
+<script type="text/html" id="alert_template">
+  <div class="alert alert-{{level}}">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{level}}!</strong> {{msg}} 
+  </div>
+</script>
+
