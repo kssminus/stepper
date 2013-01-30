@@ -8,7 +8,7 @@
 - MongoDB
 
 ## Install
-  $ git clone https://github.com/kssminus/stepper.git
+    $ git clone https://github.com/kssminus/stepper.git
     $ cd stepper && bundle install 
 
 
@@ -16,16 +16,16 @@
 #### stepper's sucker - udp server
 stepper는 [mouth project](https://github.com/cypriss/mouth)의 sucker라는 udp server와 많이 닮아 있습니다.
 
-  $ script/stepper -h
-  Usage: Stepper [options]
-  == Stepper Sucker ==
+    # script/stepper -h
+    Usage: Stepper [options]
+    == Stepper Sucker ==
   
-  Starting Stepper's Sucker
+    Starting Stepper's Sucker
     If you don't give any options, it'll refer <AppHome>/config/mongo.yml, sucker.yml
-  Stepper의 Sucker를 시작합니다.
-  옵션을 주지 않으면<AppHome>/config/mongo.yml, sucker.yml를 참조합니다.
+    Stepper의 Sucker를 시작합니다.
+    옵션을 주지 않으면<AppHome>/config/mongo.yml, sucker.yml를 참조합니다.
   
-  Options:
+    Options:
         --env environment            WHAT ENVIRONMENT ARE YOU ON??
         --pidfile PATH               DO YOU WANT ME TO WRITE A PIDFILE SOMEWHERE FOR U?
         --logfile PATH               I'LL POOP OUT LOGS HERE FOR U
@@ -38,40 +38,40 @@ stepper는 [mouth project](https://github.com/cypriss/mouth)의 sucker라는 udp
     -h, --help                       I WANT MOAR HALP
 설정파일에 미리 정의해 놓고 파라미터를 주지 않아도 됩니다.
   
-  ### config/mongo.yml ###
-  ## 몽고 환경 변수
+    ### config/mongo.yml ###
+    ## 몽고 환경 변수
 
-  development:
+    development:
       host: localhost
       port: 27017
       database: stepper
 
-  production:
+    production:
       host: localhost
       port: 27017
       database: stepper
 udp 서버설정은 다음 파일에서 합니다.
 
-  ### config/sucker.yml ###
+    ### config/sucker.yml ###
     ## sucker 환경 변수
   
-  development:
+    development:
       host: 127.0.0.1
       port: 8082
 
-  production:
+    production:
       host: 127.0.0.1
       port: 8082
 이제 다음 명령으로 바로 시작 가능합니다.
   
-  # script/stepper     
+    # script/stepper     
 
 #### WebUI 시작
     # rails server &
     
 ## Feed DATA(데이터 공급하기)
 ### by Instrument
-    $LOAD_PATH.unshift <app_home_path>/lib')
+    $LOAD_PATH.unshift('<app_home_path>/lib')
     require 'stepper'
     require 'stepper/instrument'
     
@@ -84,19 +84,19 @@ udp 서버설정은 다음 파일에서 합니다.
 ### by excutable
 config/mongo.yml과 config/sucker.yml이 설정되어 있다면 간단!! 안되어 있다면 **-h**옵션주기
   
-  # script/step -s [StepId] -m [Max Step]
-  # script/stepup -s [StepId] (-u 3)
+    # script/step -s [StepId] -m [Max Step]
+    # script/stepup -s [StepId] (-u 3)
   
 
 ### by file
 
 excutable에서 **-f** 옵션으로 파일 경로를 줘서 실행
   
-   # script/step -s [StepId] -m [Max Step] -f /var/log/step.log
-   # script/stepup -s [StepId] -f /var/log/step.log
+    # script/step -s [StepId] -m [Max Step] -f /var/log/step.log
+    # script/stepup -s [StepId] -f /var/log/step.log
    
 remote_syslog gem으로 sucker에 보내주기
 
-   # remote_syslog -d [host] -p [port] [file_path] 
+    # remote_syslog -d [host] -p [port] [file_path] 
 
 
