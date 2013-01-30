@@ -68,10 +68,18 @@ udp 서버설정은 다음 파일에서 합니다.
     # script/stepper     
 
 #### WebUI 시작
+
     # rails server &
     
 ## Feed DATA(데이터 공급하기)
+
+[stepper-instrument](https://github.com/kssminus/stepper-instrument)
+    $ gem install stepper-instrument
+    
+#젬을 설치하기 싫다면...
+
 ### by Instrument
+
     $LOAD_PATH.unshift('<app_home_path>/lib')
     require 'stepper'
     require 'stepper/instrument'
@@ -100,4 +108,8 @@ remote_syslog gem으로 sucker에 보내주기
 
     # remote_syslog -d [host] -p [port] [file_path] 
 
+# 해야할 일 
 
+- rails을 unicorn으로 띄울 수 있도록
+- UI에서 오래된 스텝을 찾아볼 수 있고 삭제할 수 있도록.. 
+- 더 할것 찾아보자
