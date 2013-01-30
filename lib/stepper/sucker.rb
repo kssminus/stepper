@@ -8,9 +8,14 @@ module Stepper
     attr_accessor :sucker
   
     def receive_data(data)
-      Stepper.logger.debug "UDP packet: '#{data}'"
-      data = data.split(" ")[-1]
-      sucker.store!(data)
+      #Stepper.logger.debug "UDP packet: '#{data}'"
+      data = data.to_s()[/[0-9a-zA-Z\.]+:\d+\|\w+$/]
+      if data
+        Stepper.logger.debug "Stepper UDP: '#{data}'"
+        sucker.store!(data)
+      else
+        Stepper.logger.debug "bad packet!!"
+      end
     end
   end
   
