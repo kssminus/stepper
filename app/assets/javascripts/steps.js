@@ -22,7 +22,7 @@ function refresh() {
       }});
 
       $("#progresses").empty().append(stat);
-      console.log(stat);
+      //console.log(stat);
       setTimeout(refresh, 5000);
     }
 
