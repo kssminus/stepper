@@ -2,7 +2,7 @@
 <%= javascript_include_tag "steps" %>
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span3">
+    <div class="span2">
       <div class="well sidebar-nav">
         <ul class="nav nav-list">
           <li class="active"><a href="/?dashboard=<%=params[:dashboard]%>">FLOW</a></li>
@@ -11,7 +11,7 @@
         </ul>
       </div><!--/.well -->
     </div><!--/span-->
-    <div id="progresses" class="span9">
+    <div id="progresses" class="span10">
     <% @steps.each do |step| %>
       <div class="progress progress-<%=step.status%> progress-striped active" >
         <div class="bar" style="width: <%=step.progress%>%" >
