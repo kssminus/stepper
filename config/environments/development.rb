@@ -28,4 +28,26 @@ Stepper::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  if defined?(IRB::Context) && !defined?(Rails::Server) 
+    class IRB::Context
+      def evaluate_with_reloading(line, line_no)
+        reload!(true)       
+ 
+        evaluate_without_reloading(line, line_no)
+      end
+      alias_method_chain :evaluate, :reloading
+    
+      def reload!(print=true)
+        #puts "Reloading..." if print
+        Dir["#{Rails.root}/app/models/**.rb"].each do |lib|
+          $".delete_if { |s| s.include? lib }
+          require lib
+        end
+        #true
+      end  
+    end
+  
+    puts "=> IRB code reloading enabled"
+  end
 end

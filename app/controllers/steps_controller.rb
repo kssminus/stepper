@@ -9,7 +9,7 @@ class StepsController < ApplicationController
     steps = Step.sort(:t.desc).limit(20)
     
     @steps  = Array.new
-    steps.each { |s| @steps << s }
+    steps.each { |s| s.stuff;@steps << s; }
     @steps.sort!{ |a,b| a.progress <=> b.progress }
     
     #@steps.each { |s| Rails.logger.info s.progress }

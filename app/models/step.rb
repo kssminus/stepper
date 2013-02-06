@@ -2,16 +2,30 @@ class Step
   include MongoMapper::Document
   
   key :si, String
-  key :t, Integer
-  key :ms, Integer, :defalut => 1
+  key :t, Integer, :default => Time.now.to_i
+  key :ms, Integer, :default => 1
   key :cs, Integer, :default => 0
+  key :status, String, :default => "danger" 
+  key :progress, Float, :default => 0.0
 
-  validate :ms_bigger_than_0
-
-  def ms_bigger_than_0
-    errors.add(:ms, "Step Max should be bigger than 0") if ms < 0
-  end
-  def progress
-    return ((cs.to_f/ms.to_f)*100 > 100 )? 100 : (cs.to_f/ms.to_f)*100 
+  attr_accessible :si, :ms, :t, :status, :progress
+ 
+  def stuff
+    if (cs.to_f/ms.to_f)*100 >= 100 
+      @progress = 100 
+    else
+      @progress = (cs.to_f/ms.to_f)*100
+    end
+    
+    
+    if cs.eql? ms
+      @status = "success"
+    elsif t >= 1.minute.ago.to_i 
+      @status = "info"
+    elsif t >= 3.minutes.ago.to_i 
+      @status = "warning"
+    elsif t >= 5.minutes.ago.to_i
+      @status =  "danger"
+    end
   end
 end

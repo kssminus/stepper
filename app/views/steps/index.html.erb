@@ -13,8 +13,8 @@
     </div><!--/span-->
     <div id="progresses" class="span9">
     <% @steps.each do |step| %>
-      <div class="progress progress-striped active" >
-        <div class="bar" style="width: <%=step.progress.to_i%>%" >
+      <div class="progress progress-<%=step.status%> progress-striped active" >
+        <div class="bar" style="width: <%=step.progress%>%" >
           <%= step.si%>(<%=step.cs.to_i%>/<%=step.ms.to_i%>)
         </div>
       </div>
@@ -33,7 +33,7 @@
 
 <script type="text/html"  id="stepTemplate">
 {{#steps}}
-  <div class="progress progress-striped active" >
+  <div class="progress progress-{{status}} progress-striped active" >
     <div class="bar" style="width: {{progress}}%" >
       {{si}}({{cs}}/{{ms}})
     </div>

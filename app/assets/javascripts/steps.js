@@ -14,13 +14,7 @@ function refresh() {
     });
     
     function reload_board(data) {
-      var stat = Mustache.render($("#stepTemplate").html(), { steps : data, progress : function() { 
-        if ( this.cs > this.ms)
-          return 100; 
-        else 
-          return (this.cs/this.ms)*100;
-      }});
-
+      var stat = Mustache.render($("#stepTemplate").html(), { steps : data }); 
       $("#progresses").empty().append(stat);
       //console.log(stat);
       setTimeout(refresh, 5000);

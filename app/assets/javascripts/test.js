@@ -1,7 +1,7 @@
 $(function () {
   $("#step").click( function() {
-    var step_name = $(this).parent().find(":text");
-    if(step_name.val() == ""){
+    var step_name = $(this).parent().find(":text").val();
+    if(step_name == ""){
       $("#alert").empty();
       $("#alert").append(Mustache.render($("#alert_template").html(), { level:"error", msg:"스텝 이름은 꼭넣어야 합니다."}));
       return;
@@ -13,7 +13,7 @@ $(function () {
     $.ajax({
       type: "POST",
       url: "/steps",
-      data: "dashboard="+dashboard+"&si="+step_name.val()+"&ms="+max_step.val(),
+      data: "dashboard="+dashboard+"&si="+step_name+"&ms="+max_step.val(),
       dataType: "JSON",
       success: function (data) {
         $("#alert").empty();
