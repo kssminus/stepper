@@ -1,3 +1,17 @@
+<%= javascript_include_tag "flot/jquery.flot" %>
+<%= javascript_include_tag "flot/jquery.colorhelpers" %>
+<%= javascript_include_tag "flot/jquery.flot.crosshair"%>
+<%= javascript_include_tag "flot/jquery.flot.fillbetween"%>
+<%= javascript_include_tag "flot/jquery.flot.image"%>
+<%= javascript_include_tag "flot/jquery.flot.navigate"%>
+<%= javascript_include_tag "flot/jquery.flot.pie"%>
+<%= javascript_include_tag "flot/jquery.flot.resize"%>
+<%= javascript_include_tag "flot/jquery.flot.selection"%>
+<%= javascript_include_tag "flot/jquery.flot.stack"%>
+<%= javascript_include_tag "flot/jquery.flot.symbol"%>
+<%= javascript_include_tag "flot/jquery.flot.threshold" %>
+<%= javascript_include_tag "flot/jquery.flot.orderBars" %>
+
 <%= javascript_include_tag "bootstrap_switch_2" %>
 <%= javascript_include_tag "steps" %>
 <div class="container-fluid">
@@ -11,16 +25,22 @@
         </ul>
       </div><!--/.well -->
     </div><!--/span-->
-    <div id="progresses" class="span10">
-    <% @steps.each do |step| %>
-      <div class="progress progress-<%=step.status%> progress-striped active" >
-        <div class="bar" style="width: <%=step.progress%>%" >
-          <%= step.si%>(<%=step.cs.to_i%>/<%=step.ms.to_i%>)
+    <!-- vertical graph -->
+    <div id="dsahboard" class="span10" >
+      <div id="vertical_graph" style="height:300px" >
+      </div> 
+    <!-- vertical graph -->
+    <!-- progress bars --> 
+      <div id="progresses">
+      <% @steps.each do |step| %>
+        <div class="progress progress-<%=step.status%> progress-striped active" >
+          <div class="bar" style="width: <%=step.progress%>%" >
+            <%= step.si%>(<%=step.cs.to_i%>/<%=step.ms.to_i%>)
+          </div>
         </div>
-      </div>
 
-    <% end %>
-         
+      <% end %>
+      </div><!-- progress bars -->
     </div><!--/span-->
   </div><!--/row-->
   <div class="switch active pull-right" data-toggle="switch">

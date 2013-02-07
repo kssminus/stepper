@@ -28,4 +28,8 @@ class Step
       @status =  "danger"
     end
   end
+
+  def dbname
+    "#{si}_#{t}_#{cs}"
+  end
 end

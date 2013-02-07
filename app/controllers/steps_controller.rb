@@ -1,16 +1,22 @@
 class StepsController < ApplicationController
   
   def index
-    
+    params[:limit] ||= 20
     @dashboards = Dashboard.all
     Step.set_collection_name(dashboard_to_collection(params[:dashboard]))
     #Step.set_collection_name("mouth_test")
-        
-    steps = Step.sort(:t.desc).limit(20)
     
-    @steps  = Array.new
+    if params[:t].nil?  
+      steps = Step.where(:t.gte => 1.day.ago.to_i)
+                  .limit(params[:limit])
+                  .sort(:t.desc)
+    else
+      steps = Step.where(:t.gt => params[:t].to_i).limit(params[:limit].to_i).sort(:t.desc)
+    end
+
+    @steps = Array.new()
     steps.each { |s| s.stuff;@steps << s; }
-    @steps.sort!{ |a,b| a.progress <=> b.progress }
+    #@steps.sort!{ |a,b| a.progress <=> b.progress }
     
     #@steps.each { |s| Rails.logger.info s.progress }
     #Rails.logger.info @steps.class
