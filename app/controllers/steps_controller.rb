@@ -34,9 +34,9 @@ class StepsController < ApplicationController
     Stat.set_collection_name(dashboard_to_collection(params[:dashboard])+"_stat")
     
     if params[:t].nil?  
-      @stats = Stat.where(:t.gte => (1.hour.ago.to_i/60).to_i).limit(params[:limit].to_i)
+      @stats = Stat.where(:t.gte => (1.hour.ago.to_i/60).to_i).limit(params[:limit].to_i).sort(:t.desc)
     else
-      @stats = Stat.where(:t.gt => params[:t].to_i).limit(params[:limit].to_i)
+      @stats = Stat.where(:t.gt => params[:t].to_i).limit(params[:limit].to_i).(:t.desc)
     end
 
     respond_to do |format|

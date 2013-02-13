@@ -28,13 +28,17 @@
     <!-- vertical graph -->
     <div id="dsahboard" class="span10" >
       <div class="row">
-        <div id="vertical_graph_last_update">
-          <h6>0초전 업데이트</h6>
+        <div class="input-prepend input-append">
+          <span class="add-on">STEP ID</span>
+          <input id="vertical_graph_select" type="text" placeholder="It'll be stored in the clipboard too!" class="span6" />
+          <span id="vertical_graph_last_update" class="add-on">0 초전 업데이트</span>
         </div>
       </div>
       <div class="row">
-        <div id="vertical_graph" style="height:300px" class="span6"></div> 
-        <div id="flow_graph" style="height:300px" class="span6"></div>
+        <div id="vertical_graph" style="height:150px"></div> 
+      </div>
+      <div class="row">
+        <div id="flow_graph" style="height:150px" ></div>
       </div>
     <!-- vertical graph -->
     <!-- progress bars --> 
@@ -68,5 +72,5 @@
 {{/steps}}
 </script>
 <script type="text/html"  id="lastUpdateTemplate">
-  <h6>{{past_seconds}}초전 업데이트</h6>
+  <b>{{past_seconds}}초전 업데이트</b>
 </script>

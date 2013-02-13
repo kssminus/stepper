@@ -24,9 +24,12 @@ $(function () {
   var plot;       //graph object
   var global_timestamp; //current timestamp not use
   var step_buffer = new Array(); //dataset to be draw in graph
-  var window_size = 40;  //the size withdraw at once
+  var window_size = 150;  //the size withdraw at once
   var last_update = 0;  //the size withdraw at once
+  
   var flow;       //flow graph object
+  var stat_data;      //flow graph data
+  var previousPoint;  //tool tip
 
   function get_steps(count,timestamp,callback){
     if($("#refresh").attr("checked")){
@@ -78,8 +81,10 @@ $(function () {
   function shift_graph(){
     if(step_buffer.length > 0){
       bar_graph = new Array();
-      steps_data = step_buffer.shift();    
+      steps_data = step_buffer.shift();
+          
       bar_graph.push({
+        lavel: "foo",
         data: steps_data,
         bars: {
           show: true, 
@@ -117,7 +122,8 @@ $(function () {
     if(!plot){ 
       plot = $.plot($("#vertical_graph"), bar_graph, {
                 grid: {
-                  hoverable: true
+                  hoverable: true,
+                  clickable: true
                 }
             });
       return;
@@ -136,11 +142,18 @@ $(function () {
     $("#vertical_graph_last_update").empty().append(html);
   }
 
+    
+  get_steps(window_size, null, draw_graph);
+  setInterval(function(){get_steps(window_size*2, null, buffering)}, 5000);
+  setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
+  setInterval(shift_graph, 100);
+  setInterval(function(){update_last_update(++last_update)}, 1000);
+
   //tooltip function
   function showTooltip(x, y, contents, areAbsoluteXY) {
       var rootElt = 'body';
 
-      $('<div id="tooltip" class="tooltip-with-bg">' + contents + '</div>').css( {
+      $('<a href="#" id="tooltip" class="tooltip-with-bg" data-toggle="tooltip" data-placement="top">' + contents + '</a>').css( {
           position: 'absolute',
           display: 'none',
           'z-index':'1010',
@@ -148,14 +161,50 @@ $(function () {
           left: x
       }).prependTo(rootElt).show();
   }
-  
-  get_steps(window_size, null, draw_graph);
-  setInterval(function(){get_steps(window_size*2, null, buffering)}, 5000);
-  setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
-  setInterval(shift_graph, 200);
-  setInterval(function(){update_last_update(++last_update)}, 1000);
 
+  //add tooltip event
+  $("#vertical_graph").bind("plothover", function (event, pos, item) {
+      if (item) {
+          if (previousPoint != item.datapoint) {
+              previousPoint = item.datapoint;
+   
+              //delete de précédente tooltip
+              $('.tooltip-with-bg').remove();
+   
+              var x = item.datapoint[0];
+   
+              //All the bars concerning a same x value must display a tooltip with this value and not the shifted value
+              if(item.series.bars.order){
+                  x = item.series.data[item.dataIndex][2]
+                  //for(var i=0; i < item.series.data.length; i++){
+                  //    if(item.series.data[i][3] == item.datapoint[0])
+                  //        x = item.series.data[i][0];
+                  //}
+              }
+   
+              var y = item.datapoint[1];
+              
+              showTooltip(item.pageX+5, item.pageY+5,x + "::" + y +"%");
+   
+          }
+      }
+      else {
+          $('.tooltip-with-bg').remove();
+          previousPoint = null;
+      }
+   
+  });
+ 
+  $("#vertical_graph").bind("plotclick", function (event, pos, item) {
+    if(item){
+      $("#vertical_graph_select").val(item.series.data[item.dataIndex][2]).focus();
+    }
+   
+  });
 
+/*-------------*/
+/** flow graph**/
+/*-------------*/
   function get_stat(count,timestamp,callback){
     if($("#refresh").attr("checked")){
       var dashboard = getUrlParams().dashboard;
@@ -181,14 +230,15 @@ $(function () {
 
   function draw_flow(data){
     var series = new Array();
-    
-    stat_data = [];
+     
+    stat_data = data;
+    temp_stat = [];
     for( var i = 0; i < data.length; i++){
-      stat_data.push([i, data[i].c]);
+      temp_stat.push([i, data[i].c]);
     }
 
     series = [{
-      data: stat_data,
+      data: temp_stat,
       lines: {
         fill: true
       }
@@ -222,7 +272,7 @@ $(function () {
             },
             yaxis: {
               min: 0,
-              max: 110
+              max:50
             },
             legend: {
               show: true
@@ -235,6 +285,28 @@ $(function () {
     flow.draw();
 
   }
+
+  $("#flow_graph").bind("plothover", function (event, pos, item) {
+    if (item) {
+      if (previousPoint != item.datapoint) {
+        previousPoint = item.datapoint;
+        
+        //delete de précédente tooltip
+        $('.tooltip-with-bg').remove();
+   
+        var y = item.datapoint[1];
+        timestr = new Date(stat_data[item.datapoint[0]].t*60*1000);
+        showTooltip(item.pageX+5, item.pageY+5, y +"</br>"+timestr.toLocaleTimeString());
+   
+      }
+    }
+    else {
+      $('.tooltip-with-bg').remove();
+      previousPoint = null;
+    }
+   
+  });
+
   get_stat(60, null, draw_flow);
   setInterval(function(){get_stat(60, null, draw_flow);}, 60000);
 
