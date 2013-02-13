@@ -8,13 +8,13 @@ module Stepper
     attr_accessor :sucker
   
     def receive_data(data)
-      Stepper.logger.debug "UDP packet: '#{data}'"
+      #Stepper.logger.debug "UDP packet: '#{data}'"
       data = data.to_s()[/[0-9a-zA-Z\.\-\_]+:\d+\|\w+$/]
       if data
         Stepper.logger.info "Stepper UDP: '#{data}'"
         sucker.store!(data)
       else
-        Stepper.logger.debug "bad packet!!"
+        #Stepper.logger.debug "bad packet!!"
       end
     end
   end
@@ -134,6 +134,9 @@ module Stepper
           
           #기존에 등록되어 있는것이 있으면 덮어 씌운다.
           self.mongo.collection(collection_name).update({"si"=>step_id}, step_to_save, { :upsert => true } )
+          min = (ts/60).to_i
+          self.mongo.collection("#{collection_name}_stat")
+                .update({"t"=>min},{"$inc"=>{"c"=>1}}, { :upsert => true } )
           
           self.steps.delete(step_key)
         end

@@ -19,13 +19,15 @@ $(function() {
 
 /* vertical bars */
 $(function () {
-  var steps_data;
-  var plot;
-  var global_timestamp; 
-  var step_buffer = new Array(); 
   
+  var steps_data; //current data the view have
+  var plot;       //graph object
+  var global_timestamp; //current timestamp not use
+  var step_buffer = new Array(); //dataset to be draw in graph
+  var window_size = 40;  //the size withdraw at once
+  var last_update = 0;  //the size withdraw at once
+
   function get_steps(count,timestamp,callback){
-    
     if($("#refresh").attr("checked")){
       var dashboard = getUrlParams().dashboard;
       var params = "";
@@ -48,31 +50,34 @@ $(function () {
     
   }
   
-  function stuff_steps(data){
+  function buffering(data){
     if($("#refresh").attr("checked")){
-      for(var i=0;i<data.length;i++){
-        step_buffer.push(data[i]);
+      
+      i = 0;
+      for(;i<data.length;i++){
+        if(steps_data[0][2] == data[i].si)
+          break;
       }
-      if(data.length > 0)global_timestamp = data[0].t;
+
+      if(i>0)
+        update_last_update(last_update=0);
+
+      for(j=i;j>=0;j--){
+        snapshot = new Array();
+        for(k=0;k<window_size;k++){
+          snapshot.push([k, data[j+k].progress, data[j+k].si]);
+        }
+        step_buffer.push(snapshot);
+      }
     }
+    
     
   }
   
   function shift_graph(){
-    console.log(step_buffer.length)
-    
     if(step_buffer.length > 0){
-      temp_steps_data = new Array();
       bar_graph = new Array();
-      new_step = step_buffer.shift();
-      
-      temp_steps_data.push([0, new_step.cs]); 
-   
-     for(var i=1;i<steps_data.length;i++)
-        temp_steps_data.push([i, steps_data[i-1][1]]);
-  
-      steps_data = temp_steps_data;
-          
+      steps_data = step_buffer.shift();    
       bar_graph.push({
         data: steps_data,
         bars: {
@@ -86,7 +91,6 @@ $(function () {
       plot.setData(bar_graph);
       plot.draw();
     }
-    
   }
 
   function draw_graph(data){
@@ -96,7 +100,7 @@ $(function () {
     
     steps_data = [];
     for( var i = 0; i < data.length; i++){
-      steps_data.push([i, data[i].cs]);
+      steps_data.push([i, data[i].progress, data[i].si]);
     }
    
     bar_graph.push({
@@ -117,15 +121,18 @@ $(function () {
             });
       return;
     }
-    plot.setData(bar_graph);
-    plot.draw();
-
   }
   
   function draw_progress(data) {
     var stat = Mustache.render($("#stepTemplate").html(), { steps : data }); 
     
     $("#progresses").empty().append(stat);
+  }
+  
+  function update_last_update(past_seconds) {
+    var html = Mustache.render($("#lastUpdateTemplate").html(), {past_seconds : past_seconds}); 
+    
+    $("#vertical_graph_last_update").empty().append(html);
   }
 
   //tooltip function
@@ -140,9 +147,12 @@ $(function () {
           left: x
       }).prependTo(rootElt).show();
   }
-  get_steps(40, null, draw_graph);
-  setInterval(function(){get_steps(20, global_timestamp, stuff_steps);}, 5000);
-  setInterval(shift_graph, 500);
+  
+  get_steps(window_size, null, draw_graph);
+  setInterval(function(){get_steps(window_size*2, null, buffering)}, 5000);
+  setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
+  setInterval(shift_graph, 200);
+  setInterval(function(){update_last_update(++last_update)}, 1000);
   //setInterval(function(){get_steps(40,stuff_steps);}, 5000);
   //setInterval(get_steps, 5000);
     //get_steps();

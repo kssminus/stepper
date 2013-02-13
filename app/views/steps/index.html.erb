@@ -27,11 +27,18 @@
     </div><!--/span-->
     <!-- vertical graph -->
     <div id="dsahboard" class="span10" >
-      <div id="vertical_graph" style="height:300px" >
-      </div> 
+      <div class="row">
+        <div id="vertical_graph_last_update">
+          <h6>0초전 업데이트</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div id="vertical_graph" style="height:300px" class="span6"></div> 
+        <div id="flow_graph" style="height:300px" class="span6"></div>
+      </div>
     <!-- vertical graph -->
     <!-- progress bars --> 
-      <div id="progresses">
+      <div id="progresses" class="row">
       <% @steps.each do |step| %>
         <div class="progress progress-<%=step.status%> progress-striped active" >
           <div class="bar" style="width: <%=step.progress%>%" >
@@ -59,4 +66,7 @@
     </div>
   </div>
 {{/steps}}
+</script>
+<script type="text/html"  id="lastUpdateTemplate">
+  <h6>{{past_seconds}}초전 업데이트</h6>
 </script>

@@ -28,6 +28,23 @@ class StepsController < ApplicationController
     end
 
   end
+  
+  def stat
+    params[:limit] ||= 20
+    Step.set_collection_name(dashboard_to_collection(params[:dashboard])+"_stat")
+    
+    if params[:t].nil?  
+      steps = Step.where(:t.gte => (1.hour.ago/60).to_i)
+                  .limit(params[:limit])
+    else
+      steps = Step.where(:t.gt => params[:t].to_i).limit(params[:limit].to_i)
+    end
+
+    respond_to do |format|
+      format.json { render json: @steps }
+    end
+
+  end
 
   def test
     @dashboards = Dashboard.all
