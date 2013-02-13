@@ -26,6 +26,7 @@ $(function () {
   var step_buffer = new Array(); //dataset to be draw in graph
   var window_size = 40;  //the size withdraw at once
   var last_update = 0;  //the size withdraw at once
+  var flow;       //flow graph object
 
   function get_steps(count,timestamp,callback){
     if($("#refresh").attr("checked")){
@@ -153,113 +154,88 @@ $(function () {
   setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
   setInterval(shift_graph, 200);
   setInterval(function(){update_last_update(++last_update)}, 1000);
-  //setInterval(function(){get_steps(40,stuff_steps);}, 5000);
-  //setInterval(get_steps, 5000);
-    //get_steps();
-});
 
-/* basic 
-$(function() {
 
-  var container = $("#vertical_graph");
+  function get_stat(count,timestamp,callback){
+    if($("#refresh").attr("checked")){
+      var dashboard = getUrlParams().dashboard;
+      var params = "";
+      
+      if (dashboard == undefined)
+        dashboard = "";
+      
+      params += "dashboard="+dashboard;
+      if(count != null)params += "&limit="+count;
+      if(timestamp != null)params += "&t="+timestamp;
+      
+      $.ajax({
+        type: "GET",
+        url: "steps/stat.json",
+        data: params,
+        dataType: "JSON",
+        success: callback
+      });
+    }
+    
+  }
 
-  // Determine how many data points to keep based on the placeholder's initial size;
-  // this gives us a nice high-res plot while avoiding more than one point per pixel.
-
-  var maximum = container.outerWidth() / 2 || 300;
-
-  //
-
-  var data = [];
-
-    function getRandomData() {
-
-        if (data.length) {
-            data = data.slice(1);
-        }
-
-        while (data.length < maximum) {
-            var previous = data.length ? data[data.length - 1] : 50;
-            var y = previous + Math.random() * 10 - 5;
-            data.push(y < 0 ? 0 : y > 100 ? 100 : y);
-        }
-
-        // zip the generated y values with the x values
-
-        var res = [];
-        for (var i = 0; i < data.length; ++i) {
-            res.push([i, data[i]])
-        }
-
-        return res;
+  function draw_flow(data){
+    var series = new Array();
+    
+    stat_data = [];
+    for( var i = 0; i < data.length; i++){
+      stat_data.push([i, data[i].c]);
     }
 
-  //
-
-  series = [{
-    data: getRandomData(),
-    lines: {
-      fill: true
-    }
-  }];
-
-  //
-
-  var plot = $.plot(container, series, {
-    grid: {
-      borderWidth: 1,
-      minBorderMargin: 20,
-      labelMargin: 10,
-      backgroundColor: {
-        colors: ["#fff", "#e4f4f4"]
-      },
-      hoverable: true,
-      mouseActiveRadius: 50,
-      margin: {
-        top: 8,
-        bottom: 20,
-        left: 20
-      },
-      markings: function(axes) {
-        var markings = [];
-        var xaxis = axes.xaxis;
-        for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
-          markings.push({ xaxis: { from: x, to: x + xaxis.tickSize }, color: "rgba(232, 232, 255, 0.2)" });
-        }
-        return markings;
+    series = [{
+      data: stat_data,
+      lines: {
+        fill: true
       }
-    },
-    yaxis: {
-      min: 0,
-      max: 110
-    },
-    legend: {
-      show: true
+    }];
+
+  
+    if(!flow){ 
+      flow = $.plot($("#flow_graph"), series, {
+            grid: {
+              borderWidth: 1,
+              minBorderMargin: 20,
+              labelMargin: 10,
+              backgroundColor: {
+                colors: ["#fff", "#e4f4f4"]
+              },
+              hoverable: true,
+              mouseActiveRadius: 50,
+              margin: {
+                top: 8,
+                bottom: 20,
+                left: 20
+              },
+              markings: function(axes) {
+                var markings = [];
+                var xaxis = axes.xaxis;
+                for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
+                  markings.push({ xaxis: { from: x, to: x + xaxis.tickSize }, color: "rgba(232, 232, 255, 0.2)" });
+                }
+                return markings;
+              }
+            },
+            yaxis: {
+              min: 0,
+              max: 110
+            },
+            legend: {
+              show: true
+            }
+        });
+        return;
     }
-  });
+    
+    flow.setData(series);
+    flow.draw();
 
-  // Create the demo X and Y axis labels
+  }
+  get_stat(60, null, draw_flow);
+  setInterval(function(){get_stat(60, null, draw_flow);}, 60000);
 
-  var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-    .text("Response Time (ms)")
-    .appendTo(container);
-
-  // Since CSS transforms use the top-left corner of the label as the transform origin,
-  // we need to center the y-axis label by shifting it down by half its width.
-  // Subtract 20 to factor the chart's bottom margin into the centering.
-
-  yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
-
-  // Update the random dataset at 25FPS for a smoothly-animating chart
-
-  setInterval(function updateRandom() {
-    series[0].data = getRandomData();
-    console.log(series[0])
-    plot.setData(series);
-    plot.draw();
-  }, 1000);
-
-  console.log(getRandomData());
-  console.log(getRandomData());
-})
-*/
+});

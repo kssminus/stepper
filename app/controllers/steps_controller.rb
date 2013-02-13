@@ -30,18 +30,17 @@ class StepsController < ApplicationController
   end
   
   def stat
-    params[:limit] ||= 20
-    Step.set_collection_name(dashboard_to_collection(params[:dashboard])+"_stat")
+    params[:limit] ||= 60
+    Stat.set_collection_name(dashboard_to_collection(params[:dashboard])+"_stat")
     
     if params[:t].nil?  
-      steps = Step.where(:t.gte => (1.hour.ago/60).to_i)
-                  .limit(params[:limit])
+      @stats = Stat.where(:t.gte => (1.hour.ago.to_i/60).to_i).limit(params[:limit].to_i)
     else
-      steps = Step.where(:t.gt => params[:t].to_i).limit(params[:limit].to_i)
+      @stats = Stat.where(:t.gt => params[:t].to_i).limit(params[:limit].to_i)
     end
 
     respond_to do |format|
-      format.json { render json: @steps }
+      format.json { render json: @stats }
     end
 
   end

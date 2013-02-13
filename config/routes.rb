@@ -16,6 +16,8 @@ Stepper::Application.routes.draw do
   get           '/steps/test'       => "steps#test"
   post          '/steps/stepup'     => "steps#stepup"
   post          '/steps/step'       => "steps#step"
+  
+  get           '/steps/stat'       => "steps#stat"
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
