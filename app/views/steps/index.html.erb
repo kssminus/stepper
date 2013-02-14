@@ -28,10 +28,16 @@
     <!-- vertical graph -->
     <div id="dsahboard" class="span10" >
       <div class="row">
-        <div class="input-prepend input-append">
+        <div class="input-prepend input-append span5">
           <span class="add-on">STEP ID</span>
-          <input id="vertical_graph_select" type="text" placeholder="It'll be stored in the clipboard too!" class="span6" />
+          <input id="vertical_graph_select" type="text" placeholder="Copy this id to track this step." />
           <span id="vertical_graph_last_update" class="add-on">0 초전 업데이트</span>
+        </div>
+        <div class="span7">
+          <div class="switch active pull-right" data-toggle="switch">
+            <input type="checkbox" id="refresh" checked></input>
+            <span class="switch-thumb" data-label-on="FLOW" data-label-off="STOP"></span>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -54,10 +60,6 @@
       </div><!-- progress bars -->
     </div><!--/span-->
   </div><!--/row-->
-  <div class="switch active pull-right" data-toggle="switch">
-    <input type="checkbox" id="refresh" checked></input>
-    <span class="switch-thumb" data-label-on="FLOW" data-label-off="STOP"></span>
-  </div>
 
 </div>
 
