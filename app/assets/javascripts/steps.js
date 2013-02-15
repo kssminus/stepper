@@ -34,6 +34,7 @@ $(function () {
 
   var window_size = 150;        //the size withdraw at once
   var vertical_polling = 5000;  //vertical graph polling interval 
+  var flow_threshold = 30;      //flow threshold 
   var flow_polling = 5000;      //flow graph polling interval 
   
   function get_steps(count,timestamp,callback){
@@ -239,8 +240,13 @@ $(function () {
 
     series = [{
       data: temp_stat,
+      color: "rgb(200, 20, 30)",
+      threshold: {
+        below: flow_threshold ,
+        color: "rgb(30, 180, 20)"
+      },
       lines: {
-        fill: true
+        step: true
       }
     }];
 
@@ -278,6 +284,7 @@ $(function () {
               show: true
             }
         });
+        //console.log(flow.getOptions());
         return;
     }
     
