@@ -21,16 +21,21 @@ $(function() {
 $(function () {
   
   var steps_data; //current data the view have
+  
   var plot;       //graph object
+  var flow;       //flow graph object
+  
   var global_timestamp; //current timestamp not use
   var step_buffer = new Array(); //dataset to be draw in graph
-  var window_size = 150;  //the size withdraw at once
   var last_update = 0;  //the size withdraw at once
   
-  var flow;       //flow graph object
   var stat_data;      //flow graph data
   var previousPoint;  //tool tip
 
+  var window_size = 150;        //the size withdraw at once
+  var vertical_polling = 5000;  //vertical graph polling interval 
+  var flow_polling = 5000;      //flow graph polling interval 
+  
   function get_steps(count,timestamp,callback){
     if($("#refresh").attr("checked")){
       var dashboard = getUrlParams().dashboard;
@@ -69,7 +74,7 @@ $(function () {
       for(j=i;j>=0;j--){
         snapshot = new Array();
         for(k=0;k<window_size;k++){
-          snapshot.push([k, data[j+k].progress, data[j+k].si]);
+          snapshot.push([k, data[j+k].progress, data[j+k].si, data[j+k].t]);
         }
         step_buffer.push(snapshot);
       }
@@ -106,7 +111,7 @@ $(function () {
     
     steps_data = [];
     for( var i = 0; i < data.length; i++){
-      steps_data.push([i, data[i].progress, data[i].si]);
+      steps_data.push([i, data[i].progress, data[i].si, data[i].t]);
     }
    
     bar_graph.push({
@@ -142,11 +147,16 @@ $(function () {
     $("#vertical_graph_last_update").empty().append(html);
   }
 
-    
+  function recursive(){
+    shift_graph();
+    setTimeout(recursive, vertical_polling/(step_buffer.length+5));
+  }
+  
+  
   get_steps(window_size, null, draw_graph);
-  setInterval(function(){get_steps(window_size*2, null, buffering)}, 5000);
-  setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
-  setInterval(shift_graph, 100);
+  setInterval(function(){get_steps(window_size*2, null, buffering)}, vertical_polling);
+  recursive();
+  //setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
   setInterval(function(){update_last_update(++last_update)}, 1000);
 
   //tooltip function
@@ -171,20 +181,10 @@ $(function () {
               //delete de précédente tooltip
               $('.tooltip-with-bg').remove();
    
-              var x = item.datapoint[0];
-   
-              //All the bars concerning a same x value must display a tooltip with this value and not the shifted value
-              if(item.series.bars.order){
-                  x = item.series.data[item.dataIndex][2]
-                  //for(var i=0; i < item.series.data.length; i++){
-                  //    if(item.series.data[i][3] == item.datapoint[0])
-                  //        x = item.series.data[i][0];
-                  //}
-              }
-   
+              var x = item.series.data[item.dataIndex][2]
               var y = item.datapoint[1];
-              
-              showTooltip(item.pageX+5, item.pageY+5,x + "::" + y +"%");
+              var time = new Date(steps_data[item.datapoint[0]][3]*1000);
+              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+time.toLocaleTimeString());
    
           }
       }
@@ -294,9 +294,9 @@ $(function () {
         //delete de précédente tooltip
         $('.tooltip-with-bg').remove();
    
-        var y = item.datapoint[1];
-        timestr = new Date(stat_data[item.datapoint[0]].t*60*1000);
-        showTooltip(item.pageX+5, item.pageY+5, y +"</br>"+timestr.toLocaleTimeString());
+        var x = item.datapoint[1];
+        time = new Date(stat_data[item.datapoint[0]].t*60*1000);
+        showTooltip(item.pageX+5, item.pageY+5, x +"</br>"+time.toLocaleTimeString());
    
       }
     }
