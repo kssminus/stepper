@@ -32,11 +32,13 @@ $(function () {
   var stat_data;      //flow graph data
   var previousPoint;  //tool tip
 
-  var window_size = 150;        //the size withdraw at once
-  var vertical_polling = 5000;  //vertical graph polling interval 
-  var flow_threshold = 30;      //flow threshold 
-  var flow_polling = 5000;      //flow graph polling interval 
-  
+  var window_size = $("#window_size").val();      //the size withdraw at once
+  var vertical_polling = 5000;                    //vertical graph polling interval 
+  var flow_threshold = $("#flow_threshold").val();     //flow threshold 
+  var flow_polling = 5000;                        //flow graph polling interval 
+  var flow_period = $("#flow_period").val();      //flow graph data_period
+
+
   function get_steps(count,timestamp,callback){
     if($("#refresh").attr("checked")){
       var dashboard = getUrlParams().dashboard;
@@ -61,7 +63,7 @@ $(function () {
   }
   
   function buffering(data){
-    if($("#refresh").attr("checked")){
+    if($("#refresh").attr("checked") && data.length > 0){
       
       i = 0;
       for(;i<data.length;i++){
@@ -75,7 +77,9 @@ $(function () {
       for(j=i;j>=0;j--){
         snapshot = new Array();
         for(k=0;k<window_size;k++){
-          snapshot.push([k, data[j+k].progress, data[j+k].si, data[j+k].t]);
+          if(data[j+k]){
+            snapshot.push([k, data[j+k].progress, data[j+k].si, data[j+k].t]);
+          }
         }
         step_buffer.push(snapshot);
       }
@@ -159,6 +163,14 @@ $(function () {
   recursive();
   //setInterval(function(){get_steps(window_size/2, null, draw_progress);}, 5000);
   setInterval(function(){update_last_update(++last_update)}, 1000);
+  
+  // select box event binding
+  $("#window_size").bind("change", function() { 
+    window_size = parseInt($(this).val());
+    plot = null;
+    get_steps(window_size, null, draw_graph);
+  });
+
 
   //tooltip function
   function showTooltip(x, y, contents, areAbsoluteXY) {
@@ -302,7 +314,7 @@ $(function () {
         $('.tooltip-with-bg').remove();
    
         var x = item.datapoint[1];
-        time = new Date(stat_data[item.datapoint[0]].t*60*1000);
+        time = new Date(stat_data[Math.round(item.datapoint[0])].t*60*1000);
         showTooltip(item.pageX+5, item.pageY+5, x +"</br>"+time.toLocaleTimeString());
    
       }
@@ -314,7 +326,21 @@ $(function () {
    
   });
 
-  get_stat(60, null, draw_flow);
+  get_stat(flow_period, null, draw_flow);
   setInterval(function(){get_stat(60, null, draw_flow);}, 60000);
+
+  $("#flow_threshold").bind("change", function() { 
+    flow_threshold = parseInt($(this).val());
+    flow = null;
+    get_stat(flow_period, null, draw_flow);
+  });
+
+  $("#flow_period").bind("change", function() { 
+    flow_period = parseInt($(this).val());
+    flow = null;
+    get_stat(flow_period, null, draw_flow);
+  });
+
+
 
 });

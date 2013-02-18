@@ -32,23 +32,38 @@
         </div>
       </div>
       <div class="row">
-        <div id="vertical_graph" style="height:150px"></div> 
+        <select id="window_size">
+          <option value="50">50 samples</option>
+          <option value="100">100 samples</option>
+          <option value="150">150 samples</option>
+          <option value="200">200 samples</option>
+          <option value="250">250 samples</option>
+        </select>
       </div>
       <div class="row">
-        <div id="flow_graph" style="height:150px" ></div>
+        <div id="vertical_graph" style="height:300px"></div> 
       </div>
-    <!-- vertical graph -->
-    <!-- progress bars --> 
-      <!-- div id="progresses" class="row">
-      <% @steps.each do |step| %>
-        <div class="progress progress-<%=step.status%> progress-striped active" >
-          <div class="bar" style="width: <%=step.progress%>%" >
-            <%= step.si%>(<%=step.cs.to_i%>/<%=step.ms.to_i%>)
-          </div>
-        </div>
-
-      <% end %>
-      </div><!-- progress bars -->
+      <div class="row"><br/></div>
+      <div class="row">
+        <label class="span3">THRESHOLD :
+          <select id="flow_threshold">
+            <option value="2">2 steps</option>
+            <option value="20">20 steps</option>
+            <option value="50">50 steps</option>
+            <option value="100">100 steps</option>
+          </select>
+        </label>
+        <label class="span3"> FLOW PERIOD :
+          <select id="flow_period" >
+            <option value="60">60 min</option>
+            <option value="120">120 min</option>
+            <option value="180">180 min</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <div id="flow_graph" style="height:300px" ></div>
+      </div>
     </div><!--/span-->
   </div><!--/row-->
 
