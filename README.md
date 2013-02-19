@@ -1,7 +1,7 @@
 # Stepper
 
 ## Overview
-![image](http://dev.kthcorp.com/wp-content/uploads/2013/01/stepper.png)
+![image](http://dev.kthcorp.com/wp-content/uploads/2013/02/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7-2013-02-19-2.37.32-PM.png)
 ---
 **Stepper**, Transaction Tracker - 여러개의 모듈로 나누어진 시스템에 걸쳐 있는 transaction을 추적해주는 어플, EventMachine + MongoDB + Rails로 개발됨.  
 ## Requirements
@@ -76,8 +76,6 @@ udp 서버설정은 다음 파일에서 합니다.
 [stepper-instrument](https://github.com/kssminus/stepper-instrument)
     $ gem install stepper-instrument
     
-#젬을 설치하기 싫다면...
-
 ### by Instrument
 
     $LOAD_PATH.unshift('<app_home_path>/lib')
@@ -99,15 +97,20 @@ config/mongo.yml과 config/sucker.yml이 설정되어 있다면 간단!! 안되�
 
 ### by file
 
-excutable에서 **-f** 옵션으로 파일 경로를 줘서 실행
+excutable에서 **-f** 옵션으로 파일 경로를 줘서 실행하면 해당 파일에 step이 쌓인다.
   
     # script/step -s [StepId] -m [Max Step] -f /var/log/step.log
     # script/stepup -s [StepId] -f /var/log/step.log
    
-remote_syslog gem으로 sucker에 보내주기
+(remote_syslog)[https://github.com/papertrail/remote_syslog] gem으로 sucker에 보내주기
 
+    # host에 port로 file_path에 있는 파일을 tail하면서 udp로 쏴 주겠다.
     # remote_syslog -d [host] -p [port] [file_path] 
-
+#### 파일 내용
+    collection_name.step_id:4|s
+    collection_name.step_id:1|su
+    collection_name.step_id:3|su
+    
 # 해야할 일 
 
 - 젬으로 간단하게 설치할 수 있도록.. 
