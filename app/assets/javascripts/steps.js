@@ -290,7 +290,7 @@ $(function () {
             },
             yaxis: {
               min: 0,
-              max:50
+              max:100
             },
             legend: {
               show: true
@@ -327,7 +327,7 @@ $(function () {
   });
 
   get_stat(flow_period, null, draw_flow);
-  setInterval(function(){get_stat(60, null, draw_flow);}, 60000);
+  setInterval(function(){get_stat(flow_period, null, draw_flow);}, 60000);
 
   $("#flow_threshold").bind("change", function() { 
     flow_threshold = parseInt($(this).val());

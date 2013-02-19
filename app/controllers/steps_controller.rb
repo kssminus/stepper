@@ -36,7 +36,7 @@ class StepsController < ApplicationController
     if params[:limit].nil?  
       @stats = Stat.where(:t.gte => (1.hour.ago.to_i/60).to_i).limit(params[:limit].to_i).sort(:t.desc)
     else
-      @stats = Stat.limit(params[:limit].to_i).sort(:t.desc)
+      @stats = Stat.where(:t.gt => (1.day.ago.to_i/60).to_i).limit(params[:limit].to_i).sort(:t.desc)
     end
 
     respond_to do |format|
