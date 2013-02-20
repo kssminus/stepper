@@ -45,21 +45,29 @@
       </div>
       <div class="row"><br/></div>
       <div class="row">
-        <label class="span3">THRESHOLD :
+        <label class="span4">THRESHOLD :
           <select id="flow_threshold">
-            <option value="2">2 steps</option>
-            <option value="20">20 steps</option>
-            <option value="50">50 steps</option>
-            <option value="100">100 steps</option>
+            <option value="20">20 counts</option>
+            <option value="50">50 counts</option>
+            <option value="100">100 counts</option>
+            <option value="200">200 counts</option>
           </select>
         </label>
-        <label class="span3"> FLOW PERIOD :
+        <label class="span4"> FLOW PERIOD :
           <select id="flow_period" >
             <option value="60">60 min</option>
             <option value="120">120 min</option>
             <option value="180">180 min</option>
           </select>
         </label>
+        <label class="span4"> FLOW MAX :
+          <select id="flow_max" >
+            <option value="100">100 per/min</option>
+            <option value="150">150 per/min</option>
+            <option value="200">200 per/min</option>
+          </select>
+        </label>
+
       </div>
       <div class="row">
         <div id="flow_graph" style="height:300px" ></div>

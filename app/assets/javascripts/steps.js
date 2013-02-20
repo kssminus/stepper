@@ -32,11 +32,12 @@ $(function () {
   var stat_data;      //flow graph data
   var previousPoint;  //tool tip
 
-  var window_size = $("#window_size").val();      //the size withdraw at once
-  var vertical_polling = 5000;                    //vertical graph polling interval 
-  var flow_threshold = $("#flow_threshold").val();     //flow threshold 
-  var flow_polling = 5000;                        //flow graph polling interval 
-  var flow_period = $("#flow_period").val();      //flow graph data_period
+  var window_size       = $("#window_size").val();    //the size withdraw at once
+  var vertical_polling  = 5000;                       //vertical graph polling interval 
+  var flow_threshold    = $("#flow_threshold").val(); //flow threshold 
+  var flow_polling      = 5000;                       //flow graph polling interval 
+  var flow_period       = $("#flow_period").val();    //flow graph data_period
+  var flow_max          = $("#flow_max").val();       //flow graph data_period
 
 
   function get_steps(count,timestamp,callback){
@@ -114,7 +115,7 @@ $(function () {
     
     if(data.length > 0)global_timestamp = data[0].t
     
-    steps_data = [];
+    steps_data = new Array();
     for( var i = 0; i < data.length; i++){
       steps_data.push([i, data[i].progress, data[i].si, data[i].t]);
     }
@@ -245,12 +246,14 @@ $(function () {
     var series = new Array();
      
     stat_data = data;
-    temp_stat = [];
+    temp_stat = new Array();
+    threshold_line = new Array();
     for( var i = 0; i < data.length; i++){
       temp_stat.push([i, data[i].c]);
+      threshold_line.push([i, flow_threshold]);
     }
 
-    series = [{
+    series.push({
       data: temp_stat,
       color: "rgb(200, 20, 30)",
       threshold: {
@@ -260,7 +263,12 @@ $(function () {
       lines: {
         step: true
       }
-    }];
+    });
+   
+   series.push({
+      data: threshold_line,
+      color: "rgb(200, 160, 160)",
+    });
 
   
     if(!flow){ 
@@ -290,7 +298,7 @@ $(function () {
             },
             yaxis: {
               min: 0,
-              max:100
+              max: flow_max
             },
             legend: {
               show: true
@@ -340,6 +348,13 @@ $(function () {
     flow = null;
     get_stat(flow_period, null, draw_flow);
   });
+  
+  $("#flow_max").bind("change", function() { 
+    flow_max = parseInt($(this).val());
+    flow = null;
+    get_stat(flow_period, null, draw_flow);
+  });
+
 
 
 
