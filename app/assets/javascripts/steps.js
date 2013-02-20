@@ -151,6 +151,7 @@ $(function () {
     var html = Mustache.render($("#lastUpdateTemplate").html(), {past_seconds : past_seconds}); 
     
     $("#vertical_graph_last_update").empty().append(html);
+    $("#clock").empty().append(new Date().toLocaleString().replace("일 ", "일<br/>"));
   }
 
   function recursive(){
