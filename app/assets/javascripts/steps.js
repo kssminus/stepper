@@ -135,6 +135,10 @@ $(function () {
                 grid: {
                   hoverable: true,
                   clickable: true
+                },
+                yaxis: {
+                  min: 0,
+                  max: 120
                 }
             });
       return;
