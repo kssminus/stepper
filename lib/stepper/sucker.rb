@@ -11,7 +11,7 @@ module Stepper
       #Stepper.logger.debug "UDP packet: '#{data}'"
       data = data.to_s()[/[0-9a-zA-Z\.\-\_]+:\d+\|\w+$/]
       if data
-        Stepper.logger.info "Stepper UDP: '#{data}'"
+        #Stepper.logger.info "Stepper UDP: '#{data}'"
         sucker.store!(data)
       else
         #Stepper.logger.debug "bad packet!!"
@@ -88,8 +88,8 @@ module Stepper
         end
 
         EM.add_periodic_timer(5) do
-          Stepper.logger.info "Steps: #{self.steps.inspect}"
-          Stepper.logger.info "Stepping: #{self.stepping.inspect}"
+          #Stepper.logger.info "Steps: #{self.steps.inspect}"
+          #Stepper.logger.info "Stepping: #{self.stepping.inspect}"
           self.flush!
           self.set_procline!
         end
@@ -112,6 +112,7 @@ module Stepper
       key = Stepper.parse_key(key).join(":")
       value = value.to_i
       
+      tms  = (Time.now.to_f()*1000).round(0)
       ts  = Time.now.to_i
 
       if command == "s"
@@ -122,6 +123,8 @@ module Stepper
       elsif command == "su"
         self.stepping[key] ||= {}
         self.stepping[key]["t"]   = ts
+        self.stepping[key]["th"]  ||= []
+        self.stepping[key]["th"].push(tms)
         self.stepping[key]["cs"]  ||= 0
         self.stepping[key]["cs"]  += value
       end
@@ -163,7 +166,7 @@ module Stepper
         end
       end
       
-      Stepper.logger.info "Saved Steps : #{temp_steps.inspect}" 
+      #Stepper.logger.info "Saved Steps : #{temp_steps.inspect}" 
 
       #"mycollectioni:step_id":{ 
       # "$inc":{ 
@@ -178,6 +181,8 @@ module Stepper
          
           #스텝 증가
           self.mongo.collection(collection_name).update({"si"=>step_id},{"$inc"=> { "cs" => stepping_to_save["cs"]}})
+          self.mongo.collection(collection_name).update({"si"=>step_id},{"$pushAll"=> { "th" => stepping_to_save["th"]}})
+          Stepper.logger.debug step_id+":"+stepping_to_save["th"].inspect
           self.stepping.delete(stepping_key)
         end
       end
