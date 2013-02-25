@@ -31,7 +31,9 @@ module Stepper
     # Info to connect to mongo
     attr_accessor :mongo_db_name
     attr_accessor :mongo_hostports
-    
+   
+    attr_accessor :collection_list
+    attr_accessor :period
     attr_accessor :steps
     attr_accessor :stepping
     
@@ -40,6 +42,9 @@ module Stepper
     attr_accessor :mongo_flushes
     
     def initialize(options = {})
+      # data keepping period, default 30 days.
+      self.period = options[:period] || 30
+
       self.host = options[:host] || "localhost"
       self.port = options[:port] || 8889
       self.mongo_db_name = options[:mongo_db_name] || "stepper"
@@ -58,6 +63,7 @@ module Stepper
       
       self.steps = {}
       self.stepping = {}
+      self.collection_list = Array.new()
     end
     
     def suck!
@@ -69,6 +75,18 @@ module Stepper
           conn.sucker = self
         end
         
+        EM.add_periodic_timer(60*60*24) do
+        #EM.add_periodic_timer(10) do
+          old_time = Time.now.to_i - 60*60*24*self.period
+          collection_list.each do |c|
+            self.mongo.collection(c).remove({"t"=> { "$lt"=> old_time }} )
+            self.mongo.collection(c+"_stat").remove({"t"=> { "$lt"=> (old_time/60).to_i }} )
+          end
+
+          Stepper.logger.info "Garbage removed Collections : #{collection_list.join(", ")}"
+          collection_list = Array.new()
+        end
+
         EM.add_periodic_timer(5) do
           Stepper.logger.info "Steps: #{self.steps.inspect}"
           Stepper.logger.info "Stepping: #{self.stepping.inspect}"
@@ -131,7 +149,10 @@ module Stepper
           # collection 이름 살균
           collection_name = Stepper.mongo_collection_name(collection) 
           step_to_save["si"] = step_id 
-          
+         
+          # for gabaging collect collection name
+          self.collection_list.push(collection_name) unless self.collection_list.include? collection_name
+
           #기존에 등록되어 있는것이 있으면 덮어 씌운다.
           self.mongo.collection(collection_name).update({"si"=>step_id}, step_to_save, { :upsert => true } )
           min = (ts/60).to_i
@@ -161,7 +182,7 @@ module Stepper
         end
       end
       
-      Stepper.logger.info "Saved Stepping : #{temp_stepping.inspect}" 
+      #Stepper.logger.info "Saved Stepping : #{temp_stepping.inspect}" 
       
       self.mongo_flushes += 1
     end

@@ -3,8 +3,9 @@
 development:
   host: 127.0.0.1
   port: 8082
+  period: 30
 
 production:
   host: 127.0.0.1
   port: 8082
-
+  period: 30
