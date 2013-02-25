@@ -138,7 +138,7 @@ $(function () {
                 },
                 yaxis: {
                   min: 0,
-                  max: 120
+                  max: 110
                 }
             });
       return;
