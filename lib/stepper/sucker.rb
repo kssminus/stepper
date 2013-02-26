@@ -158,7 +158,7 @@ module Stepper
 
           #기존에 등록되어 있는것이 있으면 덮어 씌운다.
           self.mongo.collection(collection_name).update({"si"=>step_id}, step_to_save, { :upsert => true } )
-          min = (ts/60).to_i
+          min = (step_to_save["t"]/60).to_i
           self.mongo.collection("#{collection_name}_stat")
                 .update({"t"=>min},{"$inc"=>{"c"=>1}}, { :upsert => true } )
           
@@ -166,7 +166,7 @@ module Stepper
         end
       end
       
-      #Stepper.logger.info "Saved Steps : #{temp_steps.inspect}" 
+      Stepper.logger.info "Saved Steps : #{temp_steps.inspect}" 
 
       #"mycollectioni:step_id":{ 
       # "$inc":{ 
@@ -182,12 +182,12 @@ module Stepper
           #스텝 증가
           self.mongo.collection(collection_name).update({"si"=>step_id},{"$inc"=> { "cs" => stepping_to_save["cs"]}})
           self.mongo.collection(collection_name).update({"si"=>step_id},{"$pushAll"=> { "th" => stepping_to_save["th"]}})
-          Stepper.logger.debug step_id+":"+stepping_to_save["th"].inspect
+          #Stepper.logger.debug step_id+":"+stepping_to_save["th"].inspect
           self.stepping.delete(stepping_key)
         end
       end
       
-      #Stepper.logger.info "Saved Stepping : #{temp_stepping.inspect}" 
+      Stepper.logger.info "Saved Stepping : #{temp_stepping.inspect}" 
       
       self.mongo_flushes += 1
     end

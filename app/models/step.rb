@@ -7,8 +7,8 @@ class Step
   key :cs, Integer, :default => 0
   key :status, String, :default => "danger" 
   key :progress, Float, :default => 0.0
-
-  attr_accessible :si, :ms, :t, :status, :progress
+  key :th, :default => Array.new()
+  attr_accessible :si, :ms, :t, :ms, :cs, :th, :status, :progress
  
   def stuff
     if (cs.to_f/ms.to_f)*100 >= 100 
@@ -29,7 +29,4 @@ class Step
     end
   end
 
-  def dbname
-    "#{si}_#{t}_#{cs}"
-  end
 end

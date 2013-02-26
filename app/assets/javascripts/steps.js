@@ -22,8 +22,9 @@ $(function () {
   
   var steps_data; //current data the view have
   
-  var plot;       //graph object
-  var flow;       //flow graph object
+  var plot;         //bar graph object
+  var plot_legend;  //bar legend object
+  var flow;         //flow graph object
   
   var global_timestamp; //current timestamp not use
   var step_buffer = new Array(); //dataset to be draw in graph
@@ -31,6 +32,7 @@ $(function () {
   
   var stat_data;      //flow graph data
   var previousPoint;  //tool tip
+  var legend_data = new Array();
 
   var window_size       = $("#window_size").val();    //the size withdraw at once
   var vertical_polling  = 5000;                       //vertical graph polling interval 
@@ -65,10 +67,18 @@ $(function () {
   
   function buffering(data){
     if($("#refresh").attr("checked") && data.length > 0){
-      
+      //sometimes steps_data[0] is not defined..
+      first_step_id = "";
+      for(j=0;j<steps_data[0].length;j++){
+        if(steps_data[0][j]){
+          first_step_id = steps_data[0][j][2];
+          break;
+        }
+      }
+
       i = 0;
       for(;i<data.length;i++){
-        if(steps_data[0][2] == data[i].si)
+        if( first_step_id == data[i].si)
           break;
       }
 
@@ -76,13 +86,23 @@ $(function () {
         update_last_update(last_update=0);
 
       for(j=i;j>=0;j--){
-        snapshot = new Array();
+        _steps_data = new Array();
         for(k=0;k<window_size;k++){
           if(data[j+k]){
-            snapshot.push([k, data[j+k].progress, data[j+k].si, data[j+k].t]);
+            for( var l = 0; l < (data[j+k].th.length||0);l++){
+              _steps_data[l] = _steps_data[l] || [];
+              progress = 0;
+              divider = data[j+k].th[data[j+k].th.length-1] - data[j+k].t*1000;
+              if(l==0){
+                progress = data[j+k].progress*( (data[j+k].th[0]-data[j+k].t*1000)/divider );
+              }else{
+                progress = data[j+k].progress*( (data[j+k].th[l]-data[j+k].th[l-1])/divider);
+              }
+              _steps_data[l][k] = [k, progress , data[j+k].si, data[j+k].t];
+            }
           }
         }
-        step_buffer.push(snapshot);
+        step_buffer.push(_steps_data);
       }
     }
     
@@ -91,22 +111,11 @@ $(function () {
   
   function shift_graph(){
     if(step_buffer.length > 0){
-      bar_graph = new Array();
       steps_data = step_buffer.shift();
-          
-      bar_graph.push({
-        lavel: "foo",
-        data: steps_data,
-        bars: {
-          show: true, 
-          barWidth: 0.5, 
-          order: 1,
-          lineWidth : 2
-        }
-      });
       
-      plot.setData(bar_graph);
+      plot.setData(steps_data);
       plot.draw();
+      redraw_legend();
     }
   }
 
@@ -114,41 +123,70 @@ $(function () {
     var bar_graph = new Array();
     
     if(data.length > 0)global_timestamp = data[0].t
-    
+
     steps_data = new Array();
     for( var i = 0; i < data.length; i++){
-      steps_data.push([i, data[i].progress, data[i].si, data[i].t]);
-    }
-   
-    bar_graph.push({
-      data: steps_data,
-      bars: {
-        show: true, 
-        barWidth: 0.5, 
-        order: 1,
-        lineWidth : 2
+      for( var j = 0; j < data[i].th.length;j++){
+        steps_data[j] = steps_data[j] || [];
+        progress = 0;
+        divider = data[i].th[data[i].th.length-1] - data[i].t*1000;
+        if(j==0){
+          progress = data[i].progress*( (data[i].th[0]-data[i].t*1000)/divider );
+        }else{
+          progress = data[i].progress*( (data[i].th[j]-data[i].th[j-1])/divider);
+        }
+        steps_data[j][i] = [i, progress , data[i].si, data[i].t];
       }
-    });
+    }
+    
     
     if(!plot){ 
-      plot = $.plot($("#vertical_graph"), bar_graph, {
+      plot = $.plot($("#vertical_graph"), steps_data , {
+                series: {
+                  stack: true,
+                  bars: {
+                    show: true, 
+                    barWidth: 0.5, 
+                  },
+                },
                 grid: {
                   hoverable: true,
                   clickable: true
                 },
                 yaxis: {
-                  min: 0,
+                  min: -3,
                   max: 110
                 }
             });
+      
+      for(i=0;i<steps_data.length;i++){
+        legend_data[i] = new Array();
+        legend_data[i].push([0, 100/steps_data.length]);
+
+      }
+      plot_legend = $.plot($("#vertical_legend"), legend_data, {
+                      series: {
+                        stack: true,
+                        bars: {
+                          show: true, 
+                          barWidth: 0.5, 
+                        },
+                      },
+                      yaxis: {
+                        show: true,
+                        min: -3,
+                        max: 110,
+                        tickSize: 20
+                      },
+                      xaxis: {
+                        show: true,
+                        min: -1,
+                        max: 1,
+                        tickSize: 2
+                      }
+                  });
       return;
     }
-  }
-  
-  function draw_progress(data) {
-    var stat = Mustache.render($("#stepTemplate").html(), { steps : data }); 
-    
-    $("#progresses").empty().append(stat);
   }
   
   function update_last_update(past_seconds) {
@@ -163,6 +201,15 @@ $(function () {
     setTimeout(recursive, vertical_polling/(step_buffer.length+5));
   }
   
+  function redraw_legend(){
+    legend_data = new Array();
+    for(i=0;i<steps_data.length;i++){
+        legend_data[i] = new Array();
+        legend_data[i].push([0, 100/steps_data.length]);
+    }
+    plot_legend.setData(legend_data);
+    plot_legend.draw();
+  }
   
   get_steps(window_size, null, draw_graph);
   setInterval(function(){get_steps(window_size*2, null, buffering)}, vertical_polling);
@@ -196,15 +243,12 @@ $(function () {
       if (item) {
           if (previousPoint != item.datapoint) {
               previousPoint = item.datapoint;
-   
               //delete de précédente tooltip
               $('.tooltip-with-bg').remove();
-   
-              var x = item.series.data[item.dataIndex][2]
-              var y = item.datapoint[1];
-              var time = new Date(steps_data[item.datapoint[0]][3]*1000);
+              
+              var x = item.series.data[item.dataIndex][2];
+              var time = new Date(item.series.data[item.dataIndex][3]*1000);
               showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+time.toLocaleTimeString());
-   
           }
       }
       else {

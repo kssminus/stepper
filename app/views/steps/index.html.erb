@@ -2,6 +2,7 @@
 <%= javascript_include_tag "flot/jquery.colorhelpers" %>
 <%= javascript_include_tag "flot/jquery.flot.threshold" %>
 <%= javascript_include_tag "flot/jquery.flot.orderBars" %>
+<%= javascript_include_tag "flot/jquery.flot.stack" %>
 
 <%= javascript_include_tag "bootstrap_switch_2" %>
 <%= javascript_include_tag "steps" %>
@@ -44,7 +45,8 @@
         </select>
       </div>
       <div class="row">
-        <div id="vertical_graph" style="height:300px"></div> 
+        <div id="vertical_legend" style="height:300px" class="span1"></div> 
+        <div id="vertical_graph" style="height:300px" class="span11"></div> 
       </div>
       <div class="row"><br/></div>
       <div class="row">
