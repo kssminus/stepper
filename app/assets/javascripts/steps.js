@@ -17,7 +17,6 @@ $(function() {
   
 });
 
-/* vertical bars */
 $(function () {
   
   var steps_data; //current data the view have
@@ -92,13 +91,16 @@ $(function () {
             for( var l = 0; l < (data[j+k].th.length||0);l++){
               _steps_data[l] = _steps_data[l] || [];
               progress = 0;
+              span = 0;
               divider = data[j+k].th[data[j+k].th.length-1] - data[j+k].t*1000;
               if(l==0){
-                progress = data[j+k].progress*( (data[j+k].th[0]-data[j+k].t*1000)/divider );
+                span = (data[j+k].th[0]-data[j+k].t*1000);
+                progress = data[j+k].progress*( span /divider );
               }else{
-                progress = data[j+k].progress*( (data[j+k].th[l]-data[j+k].th[l-1])/divider);
+                span = data[j+k].th[l]-data[j+k].th[l-1];
+                progress = data[j+k].progress*(span/divider);
               }
-              _steps_data[l][k] = [k, progress , data[j+k].si, data[j+k].t];
+              _steps_data[l][k] = [k, progress , data[j+k].si, data[j+k].t, span];
             }
           }
         }
@@ -112,7 +114,7 @@ $(function () {
   function shift_graph(){
     if(step_buffer.length > 0){
       steps_data = step_buffer.shift();
-      
+      console.log(steps_data); 
       plot.setData(steps_data);
       plot.draw();
       redraw_legend();
@@ -129,13 +131,16 @@ $(function () {
       for( var j = 0; j < data[i].th.length;j++){
         steps_data[j] = steps_data[j] || [];
         progress = 0;
+        span = 0;
         divider = data[i].th[data[i].th.length-1] - data[i].t*1000;
         if(j==0){
-          progress = data[i].progress*( (data[i].th[0]-data[i].t*1000)/divider );
+          span = data[i].th[0]-data[i].t*1000;
+          progress = data[i].progress*(span/divider );
         }else{
-          progress = data[i].progress*( (data[i].th[j]-data[i].th[j-1])/divider);
+          span = data[i].th[j]-data[i].th[j-1];
+          progress = data[i].progress*(span/divider);
         }
-        steps_data[j][i] = [i, progress , data[i].si, data[i].t];
+        steps_data[j][i] = [i, progress , data[i].si, data[i].t, span];
       }
     }
     
@@ -173,7 +178,7 @@ $(function () {
                         },
                       },
                       yaxis: {
-                        show: true,
+                        show: false,
                         min: -3,
                         max: 110,
                         tickSize: 20
@@ -198,7 +203,7 @@ $(function () {
 
   function recursive(){
     shift_graph();
-    setTimeout(recursive, vertical_polling/(step_buffer.length+5));
+    setTimeout(recursive, vertical_polling/(step_buffer.length+10));
   }
   
   function redraw_legend(){
@@ -247,8 +252,9 @@ $(function () {
               $('.tooltip-with-bg').remove();
               
               var x = item.series.data[item.dataIndex][2];
+              var span = item.series.data[item.dataIndex][4];
               var time = new Date(item.series.data[item.dataIndex][3]*1000);
-              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+time.toLocaleTimeString());
+              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+span+" ms"+"<br/>"+time.toLocaleTimeString());
           }
       }
       else {
