@@ -267,7 +267,7 @@ $(function () {
               //delete de précédente tooltip
               $('.tooltip-with-bg ').remove();
               var x = steps_data[item.seriesIndex][item.datapoint[0]][2];
-              var span = steps_data[item.seriesIndex][item.datapoint[0]][4];
+              var span = steps_data[item.seriesIndex][item.datapoint[0]][4]/1000;
               var time = new Date(steps_data[item.seriesIndex][item.datapoint[0]][3]);
               showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+span+" sec"+"<br/>"+time.toLocaleTimeString());
           }
