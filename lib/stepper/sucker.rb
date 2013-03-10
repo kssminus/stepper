@@ -113,16 +113,18 @@ module Stepper
       value = value.to_i
       
       tms  = (Time.now.to_f()*1000).round(0)
-      ts  = Time.now.to_i
+      #ts  = Time.now.to_i
 
       if command == "s"
         self.steps[key] ||= {}
-        self.steps[key]["t"]  = ts
+        #self.steps[key]["t"]  = ts
+        self.steps[key]["t"]  = tms
         self.steps[key]["ms"] = value #MAX STEP
         self.steps[key]["cs"] = 0     #CURRENT STEP
       elsif command == "su"
         self.stepping[key] ||= {}
-        self.stepping[key]["t"]   = ts
+        #self.stepping[key]["t"]   = ts
+        self.stepping[key]["t"]   = tms
         self.stepping[key]["th"]  ||= []
         self.stepping[key]["th"].push(tms)
         self.stepping[key]["cs"]  ||= 0
@@ -133,9 +135,10 @@ module Stepper
     end
     
     def flush!
-      ts = Time.now.to_i
+      #ts = Time.now.to_i
+      tms  = (Time.now.to_f()*1000).round(0)
       # 5초 전까지 것만 일단 저장한다. 
-      limit_ts = ts - 5
+      limit_ts = tms - 5
       
       # "mycollection:step_id": {
       #   t:  23423433,
@@ -158,7 +161,7 @@ module Stepper
 
           #기존에 등록되어 있는것이 있으면 덮어 씌운다.
           self.mongo.collection(collection_name).update({"si"=>step_id}, step_to_save, { :upsert => true } )
-          min = (step_to_save["t"]/60).to_i
+          min = (step_to_save["t"]/60000).to_i
           self.mongo.collection("#{collection_name}_stat")
                 .update({"t"=>min},{"$inc"=>{"c"=>1}}, { :upsert => true } )
           

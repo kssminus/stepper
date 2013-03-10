@@ -7,7 +7,7 @@ class StepsController < ApplicationController
     #Step.set_collection_name("mouth_test")
     
     if params[:t].nil?  
-      steps = Step.where(:t.gte => 1.day.ago.to_i)
+      steps = Step.where(:t.gte => 1.day.ago.to_i*1000)
                   .limit(params[:limit])
                   .sort(:t.desc)
     else

@@ -84,9 +84,9 @@ $(function () {
                 _steps_data[l] = _steps_data[l] || [];
                 progress = 0;
                 span = 0;
-                divider = data[j+k].th[data[j+k].th.length-1] - data[j+k].t*1000;
+                divider = data[j+k].th[data[j+k].th.length-1] - data[j+k].t;
                 if(l==0){
-                  span = (data[j+k].th[0]-data[j+k].t*1000);
+                  span = (data[j+k].th[0]-data[j+k].t);
                   progress = data[j+k].progress*( span /divider );
                 }else{
                   span = data[j+k].th[l]-data[j+k].th[l-1];
@@ -106,9 +106,9 @@ $(function () {
             _steps_data[k] = _steps_data[k] || [];
             progress = 0;
             span = 0;
-            divider = data[j].th[data[j].th.length-1] - data[j].t*1000;
+            divider = data[j].th[data[j].th.length-1] - data[j].t;
             if(k==0){
-              span = data[j].th[0]-data[j].t*1000;
+              span = data[j].th[0]-data[j].t;
               progress = data[j].progress*(span/divider );
             }else{
               span = data[j].th[k]-data[j].th[k-1];
@@ -145,9 +145,9 @@ $(function () {
         steps_data[j] = steps_data[j] || [];
         progress = 0;
         span = 0;
-        divider = data[i].th[data[i].th.length-1] - data[i].t*1000;
+        divider = data[i].th[data[i].th.length-1] - data[i].t;
         if(j==0){
-          span = data[i].th[0]-data[i].t*1000;
+          span = data[i].th[0]-data[i].t;
           progress = data[i].progress*(span/divider );
         }else{
           span = data[i].th[j]-data[i].th[j-1];
@@ -268,8 +268,8 @@ $(function () {
               $('.tooltip-with-bg ').remove();
               var x = steps_data[item.seriesIndex][item.datapoint[0]][2];
               var span = steps_data[item.seriesIndex][item.datapoint[0]][4];
-              var time = new Date(steps_data[item.seriesIndex][item.datapoint[0]][3]*1000);
-              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+span/1000+" sec"+"<br/>"+time.toLocaleTimeString());
+              var time = new Date(steps_data[item.seriesIndex][item.datapoint[0]][3]);
+              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+span+" sec"+"<br/>"+time.toLocaleTimeString());
           }
       }
       else {
