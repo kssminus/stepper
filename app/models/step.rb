@@ -11,12 +11,13 @@ class Step
   attr_accessible :si, :ms, :t, :ms, :cs, :th, :status, :progress
  
   def stuff
-    if (cs.to_f/ms.to_f)*100 >= 100 
-      @progress = 100 
+    if (cs.to_f/ms.to_f)*100 > 100 
+      @progress = 100
+      th.unshift((cs-ms).to_i)
+      @th = th
     else
       @progress = (cs.to_f/ms.to_f)*100
     end
-    
     
     if cs.eql? ms
       @status = "success"
@@ -27,6 +28,7 @@ class Step
     elsif t >= 5.minutes.ago.to_i
       @status =  "danger"
     end
+
   end
 
 end

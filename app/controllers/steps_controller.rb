@@ -16,11 +16,6 @@ class StepsController < ApplicationController
 
     @steps = Array.new()
     steps.each { |s| s.stuff;@steps << s; }
-    #@steps.sort!{ |a,b| a.progress <=> b.progress }
-    
-    #@steps.each { |s| Rails.logger.info s.progress }
-    #Rails.logger.info @steps.class
-    #Rails.logger.info @steps[0].progress
     
     respond_to do |format|
       format.html

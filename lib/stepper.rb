@@ -39,6 +39,7 @@ module Stepper
         c = mongo.collection(collection_name)
         # step_id indexing
         c.ensure_index([["si", 1]], {:background => true, :unique => true})
+        c.ensure_index([["t", 1]], {:background => true})
         c
       end
     end

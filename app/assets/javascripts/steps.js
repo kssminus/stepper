@@ -25,10 +25,11 @@ $(function () {
   var plot_legend;  //bar legend object
   var flow;         //flow graph object
   
-  var global_timestamp; //current timestamp not use
+  //var global_timestamp; //current timestamp not use
   var step_buffer = new Array(); //dataset to be draw in graph
   var last_update = 0;  //the size withdraw at once
-  
+  var first_step_id = 0; //bar graph's first step id
+
   var stat_data;      //flow graph data
   var previousPoint;  //tool tip
   var legend_data = new Array();
@@ -66,14 +67,6 @@ $(function () {
   
   function buffering(data){
     if($("#refresh").attr("checked") && data.length > 0){
-      //sometimes steps_data[0] is not defined..
-      first_step_id = "";
-      for(j=0;j<steps_data[0].length;j++){
-        if(steps_data[0][j]){
-          first_step_id = steps_data[0][j][2];
-          break;
-        }
-      }
 
       i = 0;
       for(;i<data.length;i++){
@@ -81,40 +74,63 @@ $(function () {
           break;
       }
 
-      if(i>0)
+      if(i>0){
         update_last_update(last_update=0);
-
-      for(j=i;j>=0;j--){
-        _steps_data = new Array();
-        for(k=0;k<window_size;k++){
-          if(data[j+k]){
-            for( var l = 0; l < (data[j+k].th.length||0);l++){
-              _steps_data[l] = _steps_data[l] || [];
-              progress = 0;
-              span = 0;
-              divider = data[j+k].th[data[j+k].th.length-1] - data[j+k].t*1000;
-              if(l==0){
-                span = (data[j+k].th[0]-data[j+k].t*1000);
-                progress = data[j+k].progress*( span /divider );
-              }else{
-                span = data[j+k].th[l]-data[j+k].th[l-1];
-                progress = data[j+k].progress*(span/divider);
+        for(j=i;j>=0;j--){
+          _steps_data = new Array();
+          for(k=0;k<window_size;k++){
+            if(data[j+k]){
+              for( var l = 0; l < (data[j+k].th.length||0);l++){
+                _steps_data[l] = _steps_data[l] || [];
+                progress = 0;
+                span = 0;
+                divider = data[j+k].th[data[j+k].th.length-1] - data[j+k].t*1000;
+                if(l==0){
+                  span = (data[j+k].th[0]-data[j+k].t*1000);
+                  progress = data[j+k].progress*( span /divider );
+                }else{
+                  span = data[j+k].th[l]-data[j+k].th[l-1];
+                  progress = data[j+k].progress*(span/divider);
+                }
+                _steps_data[l][k] = [k, progress , data[j+k].si, data[j+k].t, span];
               }
-              _steps_data[l][k] = [k, progress , data[j+k].si, data[j+k].t, span];
             }
+          }
+          step_buffer.push(_steps_data);
+        }
+
+      }else if(i==0){
+        _steps_data = new Array();
+        for(j = 0; j < window_size; j++){
+          for(k = 0; k < data[j].th.length;k++){
+            _steps_data[k] = _steps_data[k] || [];
+            progress = 0;
+            span = 0;
+            divider = data[j].th[data[j].th.length-1] - data[j].t*1000;
+            if(k==0){
+              span = data[j].th[0]-data[j].t*1000;
+              progress = data[j].progress*(span/divider );
+            }else{
+              span = data[j].th[k]-data[j].th[k-1];
+              progress = data[j].progress*(span/divider);
+            }
+            _steps_data[k][j] = [j, progress , data[j].si, data[j].t, span];
           }
         }
         step_buffer.push(_steps_data);
       }
     }
-    
-    
   }
   
   function shift_graph(){
-    if(step_buffer.length > 0){
+    if(step_buffer.length > 0 && plot){
       steps_data = step_buffer.shift();
-      console.log(steps_data); 
+      //console.log(steps_data);
+     
+      //update first_step_id
+      if(steps_data[0][0])
+        first_step_id = steps_data[0][0][2];
+      
       plot.setData(steps_data);
       plot.draw();
       redraw_legend();
@@ -122,9 +138,6 @@ $(function () {
   }
 
   function draw_graph(data){
-    var bar_graph = new Array();
-    
-    if(data.length > 0)global_timestamp = data[0].t
 
     steps_data = new Array();
     for( var i = 0; i < data.length; i++){
@@ -144,6 +157,9 @@ $(function () {
       }
     }
     
+    // register first step id
+    if(steps_data[0][0])
+      first_step_id = steps_data[0][0][2];
     
     if(!plot){ 
       plot = $.plot($("#vertical_graph"), steps_data , {
@@ -203,7 +219,7 @@ $(function () {
 
   function recursive(){
     shift_graph();
-    setTimeout(recursive, vertical_polling/(step_buffer.length+10));
+    setTimeout(recursive, parseInt(vertical_polling/(step_buffer.length+20)));
   }
   
   function redraw_legend(){
@@ -234,7 +250,7 @@ $(function () {
   function showTooltip(x, y, contents, areAbsoluteXY) {
       var rootElt = 'body';
 
-      $('<a href="#" id="tooltip" class="tooltip-with-bg" data-toggle="tooltip" data-placement="top">' + contents + '</a>').css( {
+      $('<a href="#" id="tooltip" class="tooltip-with-bg well" data-toggle="tooltip" data-placement="top">' + contents + '</a>').css( {
           position: 'absolute',
           display: 'none',
           'z-index':'1010',
@@ -249,12 +265,11 @@ $(function () {
           if (previousPoint != item.datapoint) {
               previousPoint = item.datapoint;
               //delete de précédente tooltip
-              $('.tooltip-with-bg').remove();
-              
-              var x = item.series.data[item.dataIndex][2];
-              var span = item.series.data[item.dataIndex][4];
-              var time = new Date(item.series.data[item.dataIndex][3]*1000);
-              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+span+" ms"+"<br/>"+time.toLocaleTimeString());
+              $('.tooltip-with-bg ').remove();
+              var x = steps_data[item.seriesIndex][item.datapoint[0]][2];
+              var span = steps_data[item.seriesIndex][item.datapoint[0]][4];
+              var time = new Date(steps_data[item.seriesIndex][item.datapoint[0]][3]*1000);
+              showTooltip(item.pageX+5, item.pageY+5, x +"<br/>"+span/1000+" sec"+"<br/>"+time.toLocaleTimeString());
           }
       }
       else {
@@ -266,7 +281,7 @@ $(function () {
  
   $("#vertical_graph").bind("plotclick", function (event, pos, item) {
     if(item){
-      $("#vertical_graph_select").val(item.series.data[item.dataIndex][2]).focus();
+      $("#vertical_graph_select").val(steps_data[item.seriesIndex][item.datapoint[0]][2]).focus();
     }
    
   });
