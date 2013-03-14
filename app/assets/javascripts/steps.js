@@ -67,7 +67,7 @@ $(function () {
   
   function buffering(data){
     if($("#refresh").attr("checked") && data.length > 0){
-
+ 
       i = 0;
       for(;i<data.length;i++){
         if( first_step_id == data[i].si)
@@ -97,6 +97,9 @@ $(function () {
             }
           }
           step_buffer.push(_steps_data);
+        
+          //update first_step_id
+          first_step_id = _steps_data[0][0][2];
         }
 
       }else if(i==0){
@@ -118,6 +121,8 @@ $(function () {
           }
         }
         step_buffer.push(_steps_data);
+        //update first_step_id
+        first_step_id = _steps_data[0][0][2];
       }
     }
   }
@@ -127,10 +132,7 @@ $(function () {
       steps_data = step_buffer.shift();
       //console.log(steps_data);
      
-      //update first_step_id
-      if(steps_data[0][0])
-        first_step_id = steps_data[0][0][2];
-      
+     
       plot.setData(steps_data);
       plot.draw();
       redraw_legend();

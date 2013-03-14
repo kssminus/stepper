@@ -1,7 +1,7 @@
 # Stepper
 
 ## Overview
-![image](http://dev.kthcorp.com/wp-content/uploads/2013/02/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7-2013-02-19-2.37.32-PM.png)
+![image](https://lh5.googleusercontent.com/-J3648_0C1v0/UUEUUeZopwI/AAAAAAAAAHE/Fk5F7XVEOZw/s1302/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2013-03-11+7.11.47+AM.png)
 ---
 **Stepper**, Transaction Tracker - 여러개의 모듈로 나누어진 시스템에 걸쳐 있는 transaction을 추적해주는 어플, EventMachine + MongoDB + Rails로 개발됨.  
 ## Requirements
