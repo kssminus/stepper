@@ -1,7 +1,11 @@
 # Stepper
 
 ## Overview
+<<<<<<< HEAD
 ![image](https://lh5.googleusercontent.com/-J3648_0C1v0/UUEUUeZopwI/AAAAAAAAAHE/Fk5F7XVEOZw/s1302/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2013-03-11+7.11.47+AM.png)
+=======
+![image](https://photos-4.dropbox.com/t/0/AADefyxFtX5star1ZAC5Gm3Uuz16NXI9vtd_H6CChJPkig/12/115826194/png/32x32/3/_/1/2/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202013-03-11%207.11.47%20AM.png/Va-bzy4G_Qzq9w5ApsGQmKfcPGUzAAqr5p_vP29bG34?size=1280x960)
+>>>>>>> fe1ff1437604b7af4576b6498fcb00acdf322627
 ---
 **Stepper**, Transaction Tracker - 여러개의 모듈로 나누어진 시스템에 걸쳐 있는 transaction을 추적해주는 어플, EventMachine + MongoDB + Rails로 개발됨.  
 ## Requirements
